@@ -12,6 +12,17 @@ services:
       - POSTGRES_DB=app
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+  server:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./docker/LolAnalytics/Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      DATABASE: app
+    depends_on:
+      - db
 
 volumes:
   postgres_data: {}
