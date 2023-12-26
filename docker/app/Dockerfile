@@ -1,4 +1,4 @@
-FROM python:3.11.5-alphine
+FROM python:3.11.5-alpine
 
 RUN apk update && apk add python3-dev gcc libc-dev
 

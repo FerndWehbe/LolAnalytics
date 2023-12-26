@@ -9,14 +9,17 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=app
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      POSTGRES_DB: app
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
+      
   server:
     restart: unless-stopped
     build:
       context: .
-      dockerfile: ./docker/LolAnalytics/Dockerfile
+      dockerfile: ./docker/app/Dockerfile
     ports:
       - 8000:8000
     environment:
