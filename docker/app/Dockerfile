@@ -7,3 +7,7 @@ WORKDIR /app
 RUN pip install --upgrade pip
 ADD ./requirements.txt /app/
 RUN pip install -r requirements.txt
+
+
+ADD ./app /app/app
+ADD ./docker /app/docker
