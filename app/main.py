@@ -5,10 +5,9 @@ app = FastAPI()
 
 
 @app.get("/summoner_statistics")
-def summoner_statistics(summoner_name: str):
+async def summoner_statistics(summoner_name: str):
     print(summoner_name)
-    task = exemplo_task.delay("teste")
-    print(task)
+    exemplo_task.delay("teste")
     return {"message": "Estatistica ainda não gerada!"}
 
 

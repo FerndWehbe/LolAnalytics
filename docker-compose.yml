@@ -7,19 +7,7 @@ services:
     ports:
       - 6379:6379
 
-  db:
-    restart: unless-stopped
-    image: postgres:14-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    ports:
-      - 5432:5432
-    environment:
-      POSTGRES_DB: app
-      POSTGRES_HOST: db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_PORT: 5432
+  
       
   server:
     restart: unless-stopped
@@ -27,6 +15,8 @@ services:
       context: .
       dockerfile: ./docker/app/Dockerfile
     entrypoint: /app/docker/app/server-entrypoint.sh
+    volumes:
+      - server_data:/app/
     ports:
       - 8080:8080
     environment:
@@ -40,6 +30,7 @@ services:
       CELERY_PORT: 6379
     depends_on:
       - db
+      - redis
 
   worker:
     restart: unless-stopped
@@ -47,6 +38,8 @@ services:
       context: .
       dockerfile: ./docker/app/Dockerfile
     entrypoint: /app/docker/app/worker-entrypoint.sh
+    volumes:
+      - server_data:/app/
     environment:
       CELERY_HOST: redis
       CELERY_PORT: 6379
@@ -68,9 +61,23 @@ services:
       - 3000:3000
     depends_on:
       - server
-      - db
+
+  db:
+    restart: unless-stopped
+    image: postgres:14-alpine
+    volumes:
+      - postgres_lol_analytics:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
 
 volumes:
-  postgres_data: {}
+  postgres_lol_analytics: {}
   front-end_static: {}
   front-end_nuxt: {}
+  server_data: {}

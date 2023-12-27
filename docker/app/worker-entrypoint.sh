@@ -1,9 +1,9 @@
 #!/bin/sh
 
 
-until cd /app
+until cd /app/app
 do
     echo "Waiting for server volume..."
 done
 
-celery -A app.config.celery_app worker -E --loglevel=info
+celery -A tasks.celery_app worker -E --loglevel=info --concurrency=2
