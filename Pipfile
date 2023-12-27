@@ -11,6 +11,7 @@ psycopg2-binary = "*"
 httpx = "*"
 celery = {extras = ["redis"], version = "*"}
 redis = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
