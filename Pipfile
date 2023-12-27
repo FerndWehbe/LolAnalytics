@@ -9,6 +9,8 @@ uvicorn = "*"
 sqlalchemy = "*"
 psycopg2-binary = "*"
 httpx = "*"
+celery = {extras = ["redis"], version = "*"}
+redis = "*"
 
 [dev-packages]
 

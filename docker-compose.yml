@@ -1,6 +1,12 @@
 version: '3.8'
 
 services:
+  redis:
+    restart: unless-stopped
+    image: redis
+    ports:
+      - 6379:6379
+
   db:
     restart: unless-stopped
     image: postgres:14-alpine
@@ -24,8 +30,40 @@ services:
     ports:
       - 8080:8080
     environment:
-      DATABASE: app
+      environment:
+      POSTGRES_DB: app
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
+      CELERY_HOST: redis
+      CELERY_PORT: 6379
     depends_on:
+      - db
+  worker:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    entrypoint: /app/docker/app/worker-entrypoint.sh
+    environment:
+      CELERY_HOST: redis
+      CELERY_PORT: 6379
+    depends_on:
+      - server
+      - redis
+      - db
+    
+  front-end:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./docker/front-end/Dockerfile
+    entrypoint: /app/docker/front-end/front-entrypoint.sh
+    ports:
+      - 3000:3000
+    depends_on:
+      - server
       - db
 
 volumes:

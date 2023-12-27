@@ -6,4 +6,9 @@ POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "postgres")
 POSTGRES_PORT = os.environ.get("POSTGRES_PORT", 5432)
 
-DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"  # noqa
+DATABASE_URL = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"  # noqa
+
+
+CELERY_HOST = os.environ.get("CELERY_HOST", "localhost")
+CELERY_PORT = os.environ.get("CELERY_PORT", 6379)
+CELERY_URL = f"redis://{CELERY_HOST}:{CELERY_PORT}/0"
