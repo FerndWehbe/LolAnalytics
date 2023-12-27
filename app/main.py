@@ -1,7 +1,11 @@
+from database import Base, engine
 from fastapi import FastAPI
+from models import Player
 from tasks import exemplo_task
 
 app = FastAPI()
+
+Base.metadata.create_all(bind=engine, tables=[Player.__table__], checkfirst=True)
 
 
 @app.get("/summoner_statistics")
