@@ -23,13 +23,16 @@ async def check(name: str, region: str):
 
     if player:
         return {"exists": True, "player": player}
-    task = get_summoner_info(nick_name, riot_id, region)
+
+    task = get_summoner_info.delay(nick_name, riot_id, region)
+
     return {"exists": False, "task_id": task.id}
 
 
 @app.get("/get_task_result")
 async def get_task_result(task_id: str):
     task = AsyncResult(task_id)
+    task.name
     return {"task_state": task.state}
 
 

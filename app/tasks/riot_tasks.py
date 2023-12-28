@@ -1,4 +1,5 @@
 import os
+from pickle import dumps
 
 from celery import shared_task
 from dotenv import load_dotenv
@@ -12,4 +13,4 @@ def get_summoner_info(nick_name, riot_id, region):
     lol_api = LolApi(os.environ.get("riot_api_key"))
     dados = lol_api.get_summoner_info_riot_id(nick_name, riot_id, region)
 
-    return dados
+    return dumps(dados)
