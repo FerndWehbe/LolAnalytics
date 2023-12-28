@@ -16,7 +16,6 @@ services:
     ports:
       - 8080:8080
     environment:
-      environment:
       POSTGRES_DB: app
       POSTGRES_HOST: db
       POSTGRES_USER: postgres
@@ -35,6 +34,11 @@ services:
       dockerfile: ./docker/app/Dockerfile
     entrypoint: /app/docker/app/worker-entrypoint.sh
     environment:
+      POSTGRES_DB: app
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
       CELERY_HOST: redis
       CELERY_PORT: 6379
     depends_on:
