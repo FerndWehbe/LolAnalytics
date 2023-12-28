@@ -7,16 +7,12 @@ services:
     ports:
       - 6379:6379
 
-  
-      
   server:
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./docker/app/Dockerfile
     entrypoint: /app/docker/app/server-entrypoint.sh
-    volumes:
-      - server_data:/app/
     ports:
       - 8080:8080
     environment:
@@ -38,8 +34,6 @@ services:
       context: .
       dockerfile: ./docker/app/Dockerfile
     entrypoint: /app/docker/app/worker-entrypoint.sh
-    volumes:
-      - server_data:/app/
     environment:
       CELERY_HOST: redis
       CELERY_PORT: 6379
@@ -80,4 +74,3 @@ volumes:
   postgres_lol_analytics: {}
   front-end_static: {}
   front-end_nuxt: {}
-  server_data: {}
