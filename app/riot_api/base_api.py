@@ -13,7 +13,7 @@ class BaseRiotApi:
             "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
             "Origin": "https://developer.riotgames.com",
         }
-        self._reagions = {
+        self._regions = {
             "br1": "americas",
             "eun1": "europe",
             "kr": "asia",
