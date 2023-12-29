@@ -38,18 +38,12 @@ async def get_task_result(task_id: str):
     return {"task_state": task.state}
 
 
-"""
-Criar rota para deletar uma task celery a partir do task_id retornado do back-end.
-
-Essa rota será usada quando a pessoa clicar em voltar ou cancelar busca na parte do front
-
-
-Para deleter a task é necessario utilizar o revoke do celery.control.
-"""
-
-
+@app.delete("/task/{task_id}")
 async def delete_task_from_id(task_id: str):
-    pass
+    result = AsyncResult(task_id).revoke()
+    if result:
+        return {"message": f"Task {task_id} deletada com sucesso"}
+    return {"message": f"Task {task_id} não encontrada"}
 
 
 @app.get("/summoner_statistics")
