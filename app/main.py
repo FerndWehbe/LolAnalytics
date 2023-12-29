@@ -48,8 +48,17 @@ async def check(name: str, region: str):
 @app.get("/get_task_result")
 async def get_task_result(task_id: str):
     task = AsyncResult(task_id)
-    task.name
-    return {"task_state": task.state}
+
+    task_state = task.state
+    result = None
+
+    if task_state == "SUCCESS":
+        result = task.result
+
+    return {
+        "task_state": task_state,
+        "task_result": result
+    }
 
 
 @app.delete("/delete_task_from_id/{task_id}")
