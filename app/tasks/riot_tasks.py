@@ -2,16 +2,23 @@ import os
 from pickle import dumps
 
 from celery import shared_task
-from database import engine
 from dotenv import load_dotenv
-from models import Match, Player
-from repository import create_player
+from models import Match, Player, PlayerMatchAssociation
+from repository import (
+    create_match,
+    create_player,
+    create_player_match_association,
+    get_player,
+)
 from riot_api.lol_api import LolApi
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
 from utils import get_timestamp_from_year
 
 from .celery_app import celery_app
+
+MATCH_INFO_TASK_PRIORITY = 5
+MATCH_LIST_TASK_PRIORITY = 4
+PLAYER_INFO_TASK_PRIORITY = 3
 
 
 @celery_app.task()
@@ -60,8 +67,10 @@ def get_summoner_info(nick_name: str, riot_id: str, region: str) -> bytes:
     dados = lol_api.get_summoner_info_riot_id(nick_name, riot_id, region)
 
     player = Player(puuid=dados.puuid, name=dados.name, riot_id=riot_id)
-
-    player = create_player(player=player)
+    try:
+        player = create_player(player=player)
+    except IntegrityError as e:
+        print(f"Player já registrado porem não possui rewind gerada. {e}")
 
     task_matchs = get_all_matchs_id.delay(dados.puuid, region)
 
@@ -82,27 +91,26 @@ def get_all_matchs_id(puuid: str, region: str, year: int = 2023) -> list:
         count=100,
     )
 
+    player = get_player(player_puuid=puuid)
+
     list_match = [Match(match_id=match_id) for match_id in list_all_ids]
 
-    session = Session(engine)
+    for obj in list_match:
+        try:
+            create_match(match=obj)
+        except IntegrityError:
+            print(f"Objeto não adicionado devido a violação de chave primaria: {obj}")
 
-    try:
-        session.add_all(list_match)
-        session.commit()
-    except IntegrityError as e:
-        session.rollback()
-        print(f"Erro de integridade: {e}")
-        for obj in list_match:
-            try:
-                session.add(obj)
-                session.commit()
-            except IntegrityError:
-                session.rollback()
-                print(
-                    f"Objeto não adicionado devido a violação de chave primaria: {obj}"
-                )
-    finally:
-        session.close()
+    list_player_match = [
+        create_player_match_association(
+            player_match=PlayerMatchAssociation(
+                player_puuid=player.puuid, match_id=match.match_id
+            )
+        )
+        for match in list_match
+    ]
+
+    print(list_player_match)
 
     return list_all_ids
 
