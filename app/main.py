@@ -54,8 +54,9 @@ async def get_task_result(task_id: str):
 
 @app.delete("/delete_task_from_id/{task_id}")
 async def delete_task_from_id(task_id: str):
-    result = AsyncResult(task_id).revoke()
+    result = AsyncResult(task_id)
     if result:
+        result.revoke()
         return {"message": f"Task {task_id} deletada com sucesso"}
     return {"message": f"Task {task_id} não encontrada"}
 
