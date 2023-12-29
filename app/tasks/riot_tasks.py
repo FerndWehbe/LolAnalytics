@@ -11,6 +11,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from utils import get_timestamp_from_year
 
+from .celery_app import celery_app
+
+
+@celery_app.task()
+def base_task():
+    return None
+
 
 def get_matchs_ids(
     lol_api: LolApi,
