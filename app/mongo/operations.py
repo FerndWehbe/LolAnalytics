@@ -14,8 +14,7 @@ MONGO_DB_NAME = os.environ.get("MONGO_INITDB_DATABASE", "lolanalytics")
 MONGO_COLLECTION_NAME = "lol_matches"
 
 MONGO_DB_URL = (
-    f"mongodb://{MONGO_DB_USER}:{MONGO_DB_PASSWORD}@{MONGO_DB_HOST}:\
-    {MONGO_DB_PORT}"
+    f"mongodb://{MONGO_DB_USER}:{MONGO_DB_PASSWORD}@{MONGO_DB_HOST}:{MONGO_DB_PORT}"
 )
 
 client = MongoClient(MONGO_DB_URL)

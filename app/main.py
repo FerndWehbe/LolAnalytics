@@ -1,8 +1,11 @@
+from typing import List
+
 from celery.result import AsyncResult
 from database import Base, engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import Match, Player, PlayerMatchAssociation
+from mongo import find_matches_by_puuid
 from repository import get_all_players, get_player_by_name
 from tasks import get_summoner_info
 
@@ -101,7 +104,7 @@ async def delete_task_from_id(task_id: str) -> dict:
 
 
 @app.get("/get_players")
-async def get_players() -> dict:
+async def get_players() -> List[dict]:
     """
     Rota que obtém todos os jogadores do banco de dados.
 
@@ -109,7 +112,16 @@ async def get_players() -> dict:
         dict: Retorna um dicionário com informações de todos os
         jogadores.
     """
-    return get_all_players()
+    players = get_all_players()
+    if not players:
+        return []
+    serialized_players = []
+    for player in players:
+        player_dict = {}
+        for column in player.__table__.columns:
+            player_dict[column.name] = getattr(player, column.name)
+        serialized_players.append(player_dict)
+    return serialized_players
 
 
 @app.get("/summoner_statistics")
@@ -126,6 +138,10 @@ async def summoner_statistics(summoner_name: str) -> dict:
     """
     return {"message": "Estatistica ainda não gerada!"}
 
+
+@app.get("/get_match_by_uuid/{puuid}")
+async def teste(puuid: str):
+    return find_matches_by_puuid(puuid)
 
 if __name__ == "__main__":
     import uvicorn
