@@ -113,14 +113,17 @@ async def get_players() -> List[dict]:
     players = get_all_players()
     if not players:
         return []
+    
     serialized_players = []
     for player in players:
-        player_dict = {}
-        for column in player.__table__.columns:
-            player_dict[column.name] = getattr(player, column.name)
+        player_dict = {
+            'puuid': player.puuid,
+            'name': player.name,
+            'riot_id': player.riot_id
+        }
         serialized_players.append(player_dict)
+    
     return serialized_players
-
 
 @app.get("/summoner_statistics")
 async def summoner_statistics(summoner_name: str) -> dict:
