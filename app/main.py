@@ -3,7 +3,7 @@ from database import Base, engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import Match, Player, PlayerMatchAssociation
-from repository import get_player_by_name
+from repository import get_all_players, get_player_by_name
 from tasks import get_summoner_info
 
 app = FastAPI()
@@ -55,10 +55,7 @@ async def get_task_result(task_id: str):
     if task_state == "SUCCESS":
         result = task.result
 
-    return {
-        "task_state": task_state,
-        "task_result": result
-    }
+    return {"task_state": task_state, "task_result": result}
 
 
 @app.delete("/delete_task_from_id/{task_id}")
@@ -68,6 +65,11 @@ async def delete_task_from_id(task_id: str):
         result.revoke()
         return {"message": f"Task {task_id} deletada com sucesso"}
     return {"message": f"Task {task_id} não encontrada"}
+
+
+@app.get("/get_players")
+async def get_players():
+    return get_all_players()
 
 
 @app.get("/summoner_statistics")
