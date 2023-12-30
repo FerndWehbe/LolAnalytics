@@ -16,13 +16,16 @@ from repository import (
 )
 from riot_api.lol_api import LolApi
 from sqlalchemy.exc import IntegrityError
-from utils import get_timestamp_from_year
+from utils import RateLimiter, get_timestamp_from_year
 
 from .celery_app import celery_app
 
-MATCH_INFO_TASK_PRIORITY = 5
+MATCH_INFO_TASK_PRIORITY = 3
 MATCH_LIST_TASK_PRIORITY = 4
-PLAYER_INFO_TASK_PRIORITY = 3
+PLAYER_INFO_TASK_PRIORITY = 5
+PLAYER_INFO_FAIL_TASK_PRIORITY = 10
+
+rate_limiter = RateLimiter(20, 80, 1, 120)
 
 
 @celery_app.task()
@@ -42,6 +45,7 @@ def get_matchs_ids(
     if list_ids is None:
         list_ids = []
 
+    rate_limiter.make_request()
     ids = lol_api.get_matchs_ids(puuid, region, start, count, start_time)
 
     if ids is None:
@@ -68,6 +72,8 @@ def get_summoner_info(nick_name: str, riot_id: str, region: str) -> bytes:
     load_dotenv()
 
     lol_api = LolApi(os.environ.get("riot_api_key"))
+
+    rate_limiter.make_request()
     dados = lol_api.get_summoner_info_riot_id(nick_name, riot_id, region)
 
     player = Player(puuid=dados.puuid, name=dados.name, riot_id=riot_id)
@@ -103,7 +109,7 @@ def get_all_matchs_id(puuid: str, region: str, year: int = 2023) -> list:
         try:
             create_match(match=obj)
         except IntegrityError:
-            print(f"Objeto não adicionado devido a violação de chave primaria: {obj}")
+            pass
 
     for match in list_match:
         try:
@@ -113,7 +119,7 @@ def get_all_matchs_id(puuid: str, region: str, year: int = 2023) -> list:
                 )
             )
         except IntegrityError:
-            print(f"Objeto não adicionado devido a violação de chave primaria: {obj}")
+            pass
 
     match_task = get_infos_from_list_matchs.delay(puuid, region)
 
@@ -128,12 +134,59 @@ def get_infos_from_list_matchs(puuid: str, region: str):
 
     list_matchs_ids = get_matches_not_searched_by_puuid(player_puuid=puuid)
 
-    print(list_matchs_ids)
+    print(f"Faltam: {len(list_matchs_ids)} a serem buscadas")
+
+    list_matchs_failure = []
 
     for match_id in list_matchs_ids:
-        match_info = lol_api.get_match_infos_by_id(match_id, region)
-        insert_match_data(match_info)
-        match = get_match(match_id=match_id)
-        match.is_searched = True
-        match = update_match(match_id=match_id, updated_match=match)
-        print(match)
+        try:
+            rate_limiter.make_request()
+            match_info = lol_api.get_match_infos_by_id(match_id, region)
+            insert_match_data(match_info)
+            match = get_match(match_id=match_id)
+            match.is_searched = True
+            match = update_match(match_id=match_id, updated_match=match)
+        except Exception:
+            list_matchs_failure.append(match_id)
+
+    if list_matchs_failure:
+        task_matchs_failure = get_infos_from_list_matchs_failed.delay(
+            puuid, region, list_matchs_failure
+        )
+        return {
+            "mensagem": (
+                f"Foram recuperadas "
+                f"{len(list_matchs_ids) - len(list_matchs_failure)}"
+                f" de {len(list_matchs_ids)}. Iniciando tentativa de buscar as"
+                f" {len(list_matchs_failure)} tasks faltantes."
+            ),
+            "task_id": task_matchs_failure.id,
+        }
+
+
+@shared_task
+def get_infos_from_list_matchs_failed(
+    puuid: str, region: str, list_matchs_fail: list[str]
+):
+    load_dotenv()
+
+    lol_api = LolApi(os.environ.get("riot_api_key"))
+
+    print(f"Faltam: {list_matchs_fail} a serem buscadas")
+
+    falhas = []
+
+    for match_id in list_matchs_fail:
+        try:
+            rate_limiter.make_request()
+            match_info = lol_api.get_match_infos_by_id(match_id, region)
+            insert_match_data(match_info)
+            match = get_match(match_id=match_id)
+            match.is_searched = True
+            match = update_match(match_id=match_id, updated_match=match)
+        except Exception:
+            falhas.append(match_id)
+    return {
+        "mensagem": f"{len(falhas)} partida não foram encontradas no momento.",
+        "dados": falhas,
+    }
