@@ -1,5 +1,4 @@
 import os
-from pickle import dumps
 
 from celery import shared_task
 from dotenv import load_dotenv
@@ -83,7 +82,7 @@ def get_matchs_ids(
 
 
 @shared_task
-def get_summoner_info(nick_name: str, riot_id: str, region: str) -> bytes:
+def get_summoner_info(nick_name: str, riot_id: str, region: str) -> dict:
     """
     Obtém informações sobre um invocador do League of Legends e suas partidas.
 
@@ -103,7 +102,8 @@ def get_summoner_info(nick_name: str, riot_id: str, region: str) -> bytes:
     rate_limiter.make_request()
     dados = lol_api.get_summoner_info_riot_id(nick_name, riot_id, region)
 
-    player = Player(puuid=dados.puuid, name=dados.name, riot_id=riot_id)
+    player = Player(puuid=dados.puuid, name=dados.name, riot_id=riot_id, region=region)
+
     try:
         player = create_player(player=player)
     except IntegrityError as e:
@@ -111,7 +111,11 @@ def get_summoner_info(nick_name: str, riot_id: str, region: str) -> bytes:
 
     task_matchs = get_all_matchs_id.delay(dados.puuid, region)
 
-    return dumps({"dados": dados, "task_id": task_matchs.id})
+    return {
+        "dados": {"puuid": dados.puuid, "player_name": dados.name},
+        "task_id": task_matchs.id,
+        "next_task": "listar_matchs",
+    }
 
 
 @shared_task
@@ -162,7 +166,11 @@ def get_all_matchs_id(puuid: str, region: str, year: int = 2023) -> list:
 
     match_task = get_infos_from_list_matchs.delay(puuid, region)
 
-    return dumps({"dados": list_all_ids, "task_id": match_task.id})
+    return {
+        "dados": {"puuid": puuid, "lista_ids": list_all_ids},
+        "task_id": match_task.id,
+        "next_task": "busca_dados_match",
+    }
 
 
 @shared_task
@@ -210,7 +218,9 @@ def get_infos_from_list_matchs(puuid: str, region: str) -> list:
                 f" de {len(list_matchs_ids)}. Iniciando tentativa de buscar as"
                 f" {len(list_matchs_failure)} tasks faltantes."
             ),
+            "dados": {"puuid": puuid},
             "task_id": task_matchs_failure.id,
+            "next_task": "buscar_dados_error",
         }
 
 
@@ -250,5 +260,6 @@ def get_infos_from_list_matchs_failed(
             falhas.append(match_id)
     return {
         "mensagem": f"{len(falhas)} partida não foram encontradas no momento.",
-        "dados": falhas,
+        "dados": {"lista_falhas": falhas, "puuid": puuid},
+        "next_task": "gerar_estatisticas",
     }

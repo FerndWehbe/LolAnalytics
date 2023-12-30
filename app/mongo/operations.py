@@ -28,12 +28,48 @@ def insert_many_matches_data(matches_data: list[dict]) -> None:
 
 
 def find_match_by_id(match_id: str):
-    return db[MONGO_COLLECTION_NAME].find_one({"match_id": match_id})
+    return db[MONGO_COLLECTION_NAME].find_one(
+        {"metadata.matchId": match_id}, {"_id": 0}
+    )
 
 
 def find_matches_by_ids(match_ids: list[str]):
-    return db[MONGO_COLLECTION_NAME].find({"match_id": {"$in": match_ids}})
+    return db[MONGO_COLLECTION_NAME].find(
+        {"metadata.matchId": {"$in": match_ids}}, {"_id": 0}
+    )
 
 
 def find_matches_by_puuid(puuid: str):
-    return db[MONGO_COLLECTION_NAME].find({"puuid": puuid})
+    # return db[MONGO_COLLECTION_NAME].find(
+    #     {"metadata.participants": {"$in": [puuid]}}, {"_id": 0}
+    # )
+    cursor = db[MONGO_COLLECTION_NAME].aggregate(
+        [
+            {"$match": {"metadata.participants": {"$in": [puuid]}}},
+            {
+                "$addFields": {
+                    "player_p": {
+                        "$filter": {
+                            "input": "$info.participants",
+                            "as": "participant",
+                            "cond": {
+                                "$eq": [
+                                    "$$participant.puuid",
+                                    puuid,
+                                ]
+                            },
+                        }
+                    }
+                }
+            },
+            {"$project": {"_id": 0, "info.participants": 0, "first_document._id": 0}},
+            {
+                "$group": {
+                    "_id": "$metadata.matchId",
+                    "first_document": {"$first": "$$ROOT"},
+                }
+            },
+        ]
+    )
+
+    return list(cursor)

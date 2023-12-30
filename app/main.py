@@ -1,12 +1,13 @@
-from typing import List
+import json
 
 from celery.result import AsyncResult
 from database import Base, engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from models import Match, Player, PlayerMatchAssociation
-from mongo import find_matches_by_puuid
-from repository import get_all_players, get_player_by_name
+from mongo import find_match_by_id, find_matches_by_puuid
+from repository import get_player, get_player_by_name
 from tasks import get_summoner_info
 
 app = FastAPI()
@@ -62,7 +63,7 @@ async def check(name: str, region: str) -> dict:
     return {"exists": False, "task_id": task.id}
 
 
-@app.get("/get_task_result")
+@app.get("/get_task_result/{task_id}")
 async def get_task_result(task_id: str) -> dict:
     """
     Rota que obtém o resultado de uma tarefa assíncrona pelo seu ID.
@@ -80,8 +81,17 @@ async def get_task_result(task_id: str) -> dict:
 
     if task_state == "SUCCESS":
         result = task.result
+        player = get_player(result["dados"]["puuid"])
+        player = player.to_dict()
 
-    return {"task_state": task_state, "task_result": result}
+        return {
+            "task_state": task_state,
+            "next_task": result["next_task"],
+            "player": player,
+            "task_id": result["task_id"],
+        }
+
+    return {"task_state": task_state, "message": "Processando dados."}
 
 
 @app.delete("/delete_task_from_id/{task_id}")
@@ -102,29 +112,6 @@ async def delete_task_from_id(task_id: str) -> dict:
     return {"message": f"Task {task_id} não encontrada"}
 
 
-@app.get("/get_players")
-async def get_players() -> List[dict]:
-    """
-    Rota que obtém todos os jogadores do banco de dados.
-
-    Returns:
-        dict: Retorna um dicionário com informações de todos os jogadores.
-    """
-    players = get_all_players()
-    if not players:
-        return []
-    
-    serialized_players = []
-    for player in players:
-        player_dict = {
-            'puuid': player.puuid,
-            'name': player.name,
-            'riot_id': player.riot_id
-        }
-        serialized_players.append(player_dict)
-    
-    return serialized_players
-
 @app.get("/summoner_statistics")
 async def summoner_statistics(summoner_name: str) -> dict:
     """
@@ -139,9 +126,19 @@ async def summoner_statistics(summoner_name: str) -> dict:
     return {"message": "Estatistica ainda não gerada!"}
 
 
-@app.get("/get_match_by_uuid/{puuid}")
-async def teste(puuid: str):
+@app.get("/get_matches_by_puuid/{puuid}")
+async def get_matches_by_puuid(puuid: str):
     return find_matches_by_puuid(puuid)
+
+
+@app.get("/get_match_info_by_match_id/{match_id}")
+async def get_match_info_by_match_id(match_id: str) -> dict:
+    document = find_match_by_id(match_id)
+    if document:
+        json_result = json.dumps(document, default=str)
+        return JSONResponse(content=json_result, media_type="application/json")
+    return JSONResponse(content={"error": "Documento não encontrado"})
+
 
 if __name__ == "__main__":
     import uvicorn
