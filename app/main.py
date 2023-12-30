@@ -35,7 +35,7 @@ Base.metadata.create_all(
 @app.get("/check")
 async def check(name: str, region: str) -> dict:
     """
-    Verifica se um jogador existe no banco de dados.
+    Rota Verifica se um jogador existe no banco de dados.
     Se não existir, inicia uma tarefa assíncrona para buscar informações do\
     jogador.
 
@@ -61,7 +61,7 @@ async def check(name: str, region: str) -> dict:
 @app.get("/get_task_result")
 async def get_task_result(task_id: str) -> dict:
     """
-    Obtém o resultado de uma tarefa assíncrona pelo seu ID.
+    Rota que obtém o resultado de uma tarefa assíncrona pelo seu ID.
 
     Args:
         task_id (str): ID da tarefa.
@@ -84,7 +84,7 @@ async def get_task_result(task_id: str) -> dict:
 @app.delete("/delete_task_from_id/{task_id}")
 async def delete_task_from_id(task_id: str) -> dict:
     """
-    Deleta uma tarefa assíncrona pelo seu ID.
+    Rota que deleta uma tarefa assíncrona pelo seu ID.
 
     Args:
         task_id (str): ID da tarefa.
@@ -103,7 +103,7 @@ async def delete_task_from_id(task_id: str) -> dict:
 @app.get("/get_players")
 async def get_players() -> dict:
     """
-    Obtém todos os jogadores do banco de dados.
+    Rota que obtém todos os jogadores do banco de dados.
 
     Returns:
         dict: Retorna um dicionário com informações de todos os
@@ -115,7 +115,7 @@ async def get_players() -> dict:
 @app.get("/summoner_statistics")
 async def summoner_statistics(summoner_name: str) -> dict:
     """
-    Retorna estatísticas do invocador.
+    Rota que retorna estatísticas do invocador.
 
     Args:
         summoner_name (str): Nome do invocador.

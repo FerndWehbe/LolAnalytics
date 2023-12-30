@@ -16,7 +16,9 @@ class LolApi(BaseRiotApi):
             game_name, tag_line, self._regions[server_account]
         )
         final_url = f"/lol/summoner/v4/summoners/by-puuid/{puuid}"
-        response = self._get(self._get_base_url_region(server_account) + final_url)
+        response = self._get(
+            self._get_base_url_region(server_account) + final_url
+        )
 
         if response.status_code == 200:
             return Summoner(**response.json())
@@ -28,13 +30,16 @@ class LolApi(BaseRiotApi):
     def _get_puuid_by_riot_id(
         self, game_name: str, tag_line: str, server_account: str = "americas"
     ):
-        final_url = f"/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}"
+        final_url = f"/riot/account/v1/accounts/by-riot-id/{game_name}/\
+        {tag_line}"
 
-        response = self._get(self._get_base_url_region(server_account) + final_url)
+        response = self._get(
+            self._get_base_url_region(server_account) + final_url)
 
         if response.status_code == 200:
             return response.json()["puuid"]
-        raise Exception(f"Falha na requisição. Status Code: {response.status_code}")
+        raise Exception(f"Falha na requisição. Status Code: \
+        {response.status_code}")
 
     def get_matchs_ids(
         self,
@@ -48,7 +53,8 @@ class LolApi(BaseRiotApi):
         type: str = None,
     ):
         final_url = (
-            f"/lol/match/v5/matches/by-puuid/{summoner_puuid}/ids?{start=}&{count=}"
+            f"/lol/match/v5/matches/by-puuid/{summoner_puuid}/ids?{start=}&\
+            {count=}"
         )
 
         if start_time:
@@ -63,10 +69,13 @@ class LolApi(BaseRiotApi):
         if type:
             final_url += f"&{type=}"
 
-        response = self._get(self._get_base_url_region(match_region) + final_url)
+        response = self._get(
+            self._get_base_url_region(match_region) + final_url
+        )
         if response.status_code == 200:
             return response.json()
-        raise Exception(f"Falha na requisição. Status Code: {response.status_code}")
+        raise Exception(f"Falha na requisição. Status Code: \
+        {response.status_code}")
 
     def get_match_infos_by_id(self, match_id: str, region: str):
         final_url = f"/lol/match/v5/matches/{match_id}"
@@ -79,4 +88,5 @@ class LolApi(BaseRiotApi):
             return response.json()
 
         print(self._get_base_url_region(region) + final_url)
-        raise Exception(f"Falha ma requisição. Status Code: {response.status_code}")
+        raise Exception(f"Falha ma requisição. Status Code: \
+            {response.status_code}")

@@ -5,15 +5,10 @@ from celery import shared_task
 from dotenv import load_dotenv
 from models import Match, Player, PlayerMatchAssociation
 from mongo import insert_match_data
-from repository import (
-    create_match,
-    create_player,
-    create_player_match_association,
-    get_match,
-    get_matches_not_searched_by_puuid,
-    get_player,
-    update_match,
-)
+from repository import (create_match, create_player,
+                        create_player_match_association, get_match,
+                        get_matches_not_searched_by_puuid, get_player,
+                        update_match)
 from riot_api.lol_api import LolApi
 from sqlalchemy.exc import IntegrityError
 from utils import RateLimiter, get_timestamp_from_year
@@ -42,6 +37,21 @@ def get_matchs_ids(
     count: int,
     list_ids: list = None,
 ) -> list:
+    """
+    Obtém os IDs das partidas de um jogador com base nos parâmetros fornecidos.
+
+    Args:
+        lol_api (LolApi): Instância da API do League of Legends.
+        puuid (str): Identificador único do jogador.
+        region (str): Região do jogador.
+        start_time (int): Carimbo de tempo inicial para a busca de partidas.
+        start (int): Índice inicial.
+        count (int): Número de partidas a serem buscadas.
+        list_ids (list, opcional): Lista de IDs para adicionar.
+
+    Returns:
+        list: Lista contendo os IDs das partidas.
+    """
     if list_ids is None:
         list_ids = []
 
@@ -69,6 +79,18 @@ def get_matchs_ids(
 
 @shared_task
 def get_summoner_info(nick_name: str, riot_id: str, region: str) -> bytes:
+    """
+    Obtém informações sobre um invocador do League of Legends e suas partidas.
+
+    Args:
+        nick_name (str): Apelido in-game do invocador.
+        riot_id (str): ID do invocador no Riot.
+        region (str): Região do invocador.
+
+    Returns:
+        bytes: Dados serializados contendo detalhes do invocador e o ID da \
+        tarefa para busca de informações das partidas.
+    """
     load_dotenv()
 
     lol_api = LolApi(os.environ.get("riot_api_key"))
@@ -89,6 +111,18 @@ def get_summoner_info(nick_name: str, riot_id: str, region: str) -> bytes:
 
 @shared_task
 def get_all_matchs_id(puuid: str, region: str, year: int = 2023) -> list:
+    """
+    Obtém todos os IDs de partidas de um jogador dentro de um ano específico.
+
+    Args:
+        puuid (str): Identificador único do jogador.
+        region (str): Região do jogador.
+        year (int, opcional): Ano para busca das partidas. Padrão é 2023.
+
+    Returns:
+        list: Dados serializados contendo os IDs das partidas e o ID da tarefa\
+        para busca de informações das partidas.
+    """
     load_dotenv()
 
     lol_api = LolApi(os.environ.get("riot_api_key"))
@@ -127,7 +161,18 @@ def get_all_matchs_id(puuid: str, region: str, year: int = 2023) -> list:
 
 
 @shared_task
-def get_infos_from_list_matchs(puuid: str, region: str):
+def get_infos_from_list_matchs(puuid: str, region: str) -> list:
+    """
+    Obtém informações de uma lista de partidas não pesquisadas de um jogador.
+
+    Args:
+        puuid (str): Identificador único do jogador.
+        region (str): Região do jogador.
+
+    Returns:
+        None: Retorna com base no progresso da busca por informações das \
+        partidas.
+    """
     load_dotenv()
 
     lol_api = LolApi(os.environ.get("riot_api_key"))
@@ -168,6 +213,18 @@ def get_infos_from_list_matchs(puuid: str, region: str):
 def get_infos_from_list_matchs_failed(
     puuid: str, region: str, list_matchs_fail: list[str]
 ):
+    """
+    Obtém informações de partidas que falharam em buscas anteriores.
+
+    Args:
+        puuid (str): Identificador único do jogador.
+        region (str): Região do jogador.
+        list_matchs_fail (list[str]): Lista de IDs de partidas que falharam em\
+        buscas anteriores.
+
+    Returns:
+        dict: Informações sobre as partidas que ainda não foram encontradas.
+    """
     load_dotenv()
 
     lol_api = LolApi(os.environ.get("riot_api_key"))
