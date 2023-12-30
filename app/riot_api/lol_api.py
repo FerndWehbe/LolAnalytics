@@ -71,8 +71,6 @@ class LolApi(BaseRiotApi):
     def get_match_infos_by_id(self, match_id: str, region: str):
         final_url = f"/lol/match/v5/matches/{match_id}"
 
-        print(self._get_base_url_region(region) + final_url)
-
         response = self._get(
             self._get_base_url_region(self._regions[region]) + final_url
         )
@@ -80,4 +78,5 @@ class LolApi(BaseRiotApi):
         if response.status_code == 200:
             return response.json()
 
+        print(self._get_base_url_region(region) + final_url)
         raise Exception(f"Falha ma requisição. Status Code: {response.status_code}")
