@@ -12,6 +12,7 @@ httpx = "*"
 celery = {extras = ["redis"], version = "*"}
 redis = "*"
 python-dotenv = "*"
+pymongo = "*"
 
 [dev-packages]
 

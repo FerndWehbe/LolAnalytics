@@ -9,3 +9,6 @@ class Match(Base):
     is_searched = Column(Boolean, default=False)
 
     players = relationship("PlayerMatchAssociation", back_populates="match")
+
+    def to_dict(self):
+        return {"match_id": self.match_id, "is_searched": self.is_searched}

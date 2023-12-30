@@ -23,6 +23,11 @@ services:
       POSTGRES_PORT: 5432
       CELERY_HOST: redis
       CELERY_PORT: 6379
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      MONGO_INITDB_DATABASE: lolanalytics
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+      MONGO_INITDB_ROOT_USERNAME: admin
     depends_on:
       - db
       - redis
@@ -41,6 +46,11 @@ services:
       POSTGRES_PORT: 5432
       CELERY_HOST: redis
       CELERY_PORT: 6379
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      MONGO_INITDB_DATABASE: lolanalytics
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+      MONGO_INITDB_ROOT_USERNAME: admin
     depends_on:
       - server
       - redis
@@ -73,8 +83,22 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_PORT: 5432
+  
+  mongodb:
+    restart: unless-stopped
+    image: mongo
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+      MONGO_INITDB_DATABASE: lolanalytics
+
 
 volumes:
   postgres_lol_analytics: {}
   front-end_static: {}
   front-end_nuxt: {}
+  mongodb_data: {}
