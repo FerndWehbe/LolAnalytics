@@ -2,6 +2,46 @@
 
 Projeto com finalidade de buscar informações das partidas de League of Legends e montar uma recapitulação do ano. 
 
+```
+projeto/
+│
+├── app/
+│   ├── config/
+│   │   └── config.py
+│   ├── database/
+│   │   ├── db.py
+│   │   └── decorator.py
+│   ├── models/
+│   │   ├── match.py
+│   │   ├── player.py
+│   │   └── player_match_association.py
+│   ├── mongo/
+│   │   └── operations.py
+│   ├── repository/
+│   │   ├── match.py
+│   │   ├── player.py
+│   │   └── player_match_association.py
+│   ├── riot_api/
+│   │   ├── base_api.py
+│   │   ├── lol_api.py
+│   │   └── summoner_dto.py
+│   ├── routers/
+│   ├── schema/
+│   │   └── player.py
+│   ├── tasks/
+│   │   ├── celery_app.py
+│   │   └── riot_tasks.py
+│   └── utils/
+│       ├── rate_limit_control.py
+│       └── time_calculator.py
+│
+├── docker/
+│
+├── front-end/
+│
+├── README.md
+└── requirements.txt
+```
 
 ## Steps
 Siga os passos abaixo para configurar e executar o ambiente:

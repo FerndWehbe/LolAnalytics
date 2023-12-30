@@ -3,7 +3,6 @@ from database import Base, engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import Match, Player, PlayerMatchAssociation
-from mongo import find_matches_by_puuid
 from repository import get_all_players, get_player_by_name
 from tasks import get_summoner_info
 
@@ -34,7 +33,20 @@ Base.metadata.create_all(
 
 
 @app.get("/check")
-async def check(name: str, region: str):
+async def check(name: str, region: str) -> dict:
+    """
+    Verifica se um jogador existe no banco de dados.
+    Se não existir, inicia uma tarefa assíncrona para buscar informações do\
+    jogador.
+
+    Args:
+        name (str): Nome do jogador no formato 'nick_name#riot_id'.
+        region (str): Região do jogador.
+
+    Returns:
+        dict: Retorna um dicionário indicando a existência do jogador,
+        o próprio jogador se existir, ou o ID da tarefa.
+    """
     nick_name, riot_id = name.split("#")
     player: Player = get_player_by_name(player_name=nick_name)
 
@@ -47,7 +59,17 @@ async def check(name: str, region: str):
 
 
 @app.get("/get_task_result")
-async def get_task_result(task_id: str):
+async def get_task_result(task_id: str) -> dict:
+    """
+    Obtém o resultado de uma tarefa assíncrona pelo seu ID.
+
+    Args:
+        task_id (str): ID da tarefa.
+
+    Returns:
+        dict: Retorna o estado da tarefa e seu resultado, 
+        se estiver concluída.
+    """
     task = AsyncResult(task_id)
 
     task_state = task.state
@@ -60,7 +82,17 @@ async def get_task_result(task_id: str):
 
 
 @app.delete("/delete_task_from_id/{task_id}")
-async def delete_task_from_id(task_id: str):
+async def delete_task_from_id(task_id: str) -> dict:
+    """
+    Deleta uma tarefa assíncrona pelo seu ID.
+
+    Args:
+        task_id (str): ID da tarefa.
+
+    Returns:
+        dict: Mensagem indicando se a tarefa foi deletada ou
+        não encontrada.
+    """
     result = AsyncResult(task_id)
     if result:
         result.revoke()
@@ -69,18 +101,31 @@ async def delete_task_from_id(task_id: str):
 
 
 @app.get("/get_players")
-async def get_players():
+async def get_players() -> dict:
+    """
+    Obtém todos os jogadores do banco de dados.
+
+    Returns:
+        dict: Retorna um dicionário com informações de todos os
+        jogadores.
+    """
     return get_all_players()
 
 
 @app.get("/summoner_statistics")
-async def summoner_statistics(summoner_name: str):
+async def summoner_statistics(summoner_name: str) -> dict:
+    """
+    Retorna estatísticas do invocador.
+
+    Args:
+        summoner_name (str): Nome do invocador.
+
+    Returns:
+        dict: Retorna um dicionários mostrando as estatisticas do jogador
+        durante o ano.
+    """
     return {"message": "Estatistica ainda não gerada!"}
 
-
-@app.get("/match/{puuid}")
-async def teste(puuid: str):
-    return find_matches_by_puuid(puuid)
 
 if __name__ == "__main__":
     import uvicorn

@@ -27,7 +27,7 @@ def insert_match_data(match_data: dict) -> None:
     db[MONGO_COLLECTION_NAME].insert_one(match_data)
 
 
-def insert_many_matches_data(matches_data: list[dict]):
+def insert_many_matches_data(matches_data: list[dict]) -> None:
     db[MONGO_COLLECTION_NAME].insert_many(matches_data)
 
 
