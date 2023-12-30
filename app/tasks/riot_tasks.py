@@ -5,10 +5,15 @@ from celery import shared_task
 from dotenv import load_dotenv
 from models import Match, Player, PlayerMatchAssociation
 from mongo import insert_match_data
-from repository import (create_match, create_player,
-                        create_player_match_association, get_match,
-                        get_matches_not_searched_by_puuid, get_player,
-                        update_match)
+from repository import (
+    create_match,
+    create_player,
+    create_player_match_association,
+    get_match,
+    get_matches_not_searched_by_puuid,
+    get_player,
+    update_match,
+)
 from riot_api.lol_api import LolApi
 from sqlalchemy.exc import IntegrityError
 from utils import RateLimiter, get_timestamp_from_year
@@ -120,7 +125,7 @@ def get_all_matchs_id(puuid: str, region: str, year: int = 2023) -> list:
         year (int, opcional): Ano para busca das partidas. Padrão é 2023.
 
     Returns:
-        list: Dados serializados contendo os IDs das partidas e o ID da tarefa\
+        list: Dados serializados contendo os IDs das partidas e o ID da tarefa \
         para busca de informações das partidas.
     """
     load_dotenv()
@@ -219,7 +224,7 @@ def get_infos_from_list_matchs_failed(
     Args:
         puuid (str): Identificador único do jogador.
         region (str): Região do jogador.
-        list_matchs_fail (list[str]): Lista de IDs de partidas que falharam em\
+        list_matchs_fail (list[str]): Lista de IDs de partidas que falharam em \
         buscas anteriores.
 
     Returns:

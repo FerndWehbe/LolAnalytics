@@ -11,6 +11,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:8080",
+    "http://localhost:3020",
 ]
 
 app.add_middleware(
@@ -36,7 +37,7 @@ Base.metadata.create_all(
 async def check(name: str, region: str) -> dict:
     """
     Rota Verifica se um jogador existe no banco de dados.
-    Se não existir, inicia uma tarefa assíncrona para buscar informações do\
+    Se não existir, inicia uma tarefa assíncrona para buscar informações do \
     jogador.
 
     Args:
@@ -67,8 +68,7 @@ async def get_task_result(task_id: str) -> dict:
         task_id (str): ID da tarefa.
 
     Returns:
-        dict: Retorna o estado da tarefa e seu resultado, 
-        se estiver concluída.
+        dict: Retorna o estado da tarefa e seu resultado, se estiver concluída.
     """
     task = AsyncResult(task_id)
 
@@ -90,8 +90,7 @@ async def delete_task_from_id(task_id: str) -> dict:
         task_id (str): ID da tarefa.
 
     Returns:
-        dict: Mensagem indicando se a tarefa foi deletada ou
-        não encontrada.
+        dict: Mensagem indicando se a tarefa foi deletada ou não encontrada.
     """
     result = AsyncResult(task_id)
     if result:
@@ -106,8 +105,7 @@ async def get_players() -> dict:
     Rota que obtém todos os jogadores do banco de dados.
 
     Returns:
-        dict: Retorna um dicionário com informações de todos os
-        jogadores.
+        dict: Retorna um dicionário com informações de todos os jogadores.
     """
     return get_all_players()
 
@@ -121,8 +119,7 @@ async def summoner_statistics(summoner_name: str) -> dict:
         summoner_name (str): Nome do invocador.
 
     Returns:
-        dict: Retorna um dicionários mostrando as estatisticas do jogador
-        durante o ano.
+        dict: Retorna um dicionários mostrando as estatisticas do jogador durante o ano.
     """
     return {"message": "Estatistica ainda não gerada!"}
 
