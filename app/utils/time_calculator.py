@@ -3,7 +3,7 @@ from datetime import datetime
 
 def get_timestamp_from_year(year: int) -> int:
     """
-    Obtém o tempo UNIX a partir de um ano específico, representando\
+    Obtém o tempo UNIX a partir de um ano específico, representando \
     o início do ano.
 
     Args:
