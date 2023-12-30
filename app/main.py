@@ -3,6 +3,7 @@ from database import Base, engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import Match, Player, PlayerMatchAssociation
+from mongo import find_matches_by_puuid
 from repository import get_all_players, get_player_by_name
 from tasks import get_summoner_info
 
@@ -76,6 +77,10 @@ async def get_players():
 async def summoner_statistics(summoner_name: str):
     return {"message": "Estatistica ainda não gerada!"}
 
+
+@app.get("/match/{puuid}")
+async def teste(puuid: str):
+    return find_matches_by_puuid(puuid)
 
 if __name__ == "__main__":
     import uvicorn
