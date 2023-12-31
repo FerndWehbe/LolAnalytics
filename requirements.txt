@@ -35,3 +35,4 @@ tzdata==2023.4; python_version >= '2'
 uvicorn==0.25.0; python_version >= '3.8'
 vine==5.1.0; python_version >= '3.6'
 wcwidth==0.2.12
+pandas==2.1.4
