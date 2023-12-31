@@ -32,7 +32,8 @@ projeto/
 │   │   ├── celery_app.py
 │   │   └── riot_tasks.py
 │   └── utils/
-│       ├── rate_limit_control.py
+│       ├── functions.py
+|       ├── rate_limit_control.py
 │       └── time_calculator.py
 │
 ├── docker/
