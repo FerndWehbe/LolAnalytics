@@ -6,17 +6,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from models import Match, Player, PlayerMatchAssociation
-from mongo import find_match_by_id, find_matches_by_puuid
+from mongo import find_match_by_id
 from repository import get_player, get_player_by_name
 from tasks import get_summoner_info
+from utils import create_rewind
 
 app = FastAPI()
 
-origins = [
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:3020",
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -126,9 +123,11 @@ async def summoner_statistics(summoner_name: str) -> dict:
     return {"message": "Estatistica ainda não gerada!"}
 
 
-@app.get("/get_matches_by_puuid/{puuid}")
-async def get_matches_by_puuid(puuid: str):
-    return find_matches_by_puuid(puuid)
+@app.get("/summoner_statistics_by_puuid/{puuid}")
+async def summoner_statistics_by_puuid(puuid: str) -> dict:
+    return JSONResponse(
+        content=create_rewind(puuid),
+    )
 
 
 @app.get("/get_match_info_by_match_id/{match_id}")

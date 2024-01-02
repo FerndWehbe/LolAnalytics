@@ -21,6 +21,7 @@ def get_player(db: Session, player_puuid: str) -> Player:
 def get_all_players(db: Session) -> list[Player]:
     return db.query(Player).all()
 
+
 @dec_session_local
 def update_player(db: Session, player_puuid: str, updated_player: Player) -> Player:
     existing_item = db.query(Player).filter(Player.puuid == player_puuid).first()

@@ -39,34 +39,63 @@ def find_matches_by_ids(match_ids: list[str]):
     )
 
 
-def find_matches_by_puuid(puuid: str):
-    # return db[MONGO_COLLECTION_NAME].find(
-    #     {"metadata.participants": {"$in": [puuid]}}, {"_id": 0}
-    # )
+def find_matches_by_puuid(puuid: str, datetimestamp: int = None) -> list[dict]:
+    match_param = {"first_document.metadata.participants": {"$in": [puuid]}}
+    if datetimestamp:
+        match_param["first_document.info.gameCreation"] = {"$gt": datetimestamp}
+
     cursor = db[MONGO_COLLECTION_NAME].aggregate(
         [
-            {"$match": {"metadata.participants": {"$in": [puuid]}}},
-            {
-                "$addFields": {
-                    "player_p": {
-                        "$filter": {
-                            "input": "$info.participants",
-                            "as": "participant",
-                            "cond": {
-                                "$eq": [
-                                    "$$participant.puuid",
-                                    puuid,
-                                ]
-                            },
-                        }
-                    }
-                }
-            },
-            {"$project": {"_id": 0, "info.participants": 0, "first_document._id": 0}},
             {
                 "$group": {
                     "_id": "$metadata.matchId",
                     "first_document": {"$first": "$$ROOT"},
+                }
+            },
+            {"$match": match_param},
+            {
+                "$project": {
+                    "_id": 0,
+                    "first_document.metadata.matchId": 1,
+                    "first_document.metadata.participants": 1,
+                    "first_document.info.gameCreation": 1,
+                    "first_document.info.gameDuration": 1,
+                    "first_document.info.gameEndTimestamp": 1,
+                    "first_document.info.gameStartTimestamp": 1,
+                    "first_document.info.gameMode": 1,
+                    "first_document.info.participants.puuid": 1,
+                    "first_document.info.participants.teamId": 1,
+                    "first_document.info.participants.assists": 1,
+                    "first_document.info.participants.deaths": 1,
+                    "first_document.info.participants.kills": 1,
+                    "first_document.info.participants.doubleKills": 1,
+                    "first_document.info.participants.tripleKills": 1,
+                    "first_document.info.participants.quadraKills": 1,
+                    "first_document.info.participants.pentaKills": 1,
+                    "first_document.info.participants.firstBloodKill": 1,
+                    "first_document.info.participants.dragonKills": 1,
+                    "first_document.info.participants.totalDamageDealt": 1,
+                    "first_document.info.participants.totalDamageDealtToChampions": 1,
+                    "first_document.info.participants.magicDamageDealt": 1,
+                    "first_document.info.participants.magicDamageDealtToChampions": 1,
+                    "first_document.info.participants.totalHealsOnTeammates": 1,
+                    "first_document.info.participants.visionScore": 1,
+                    "first_document.info.participants.goldEarned": 1,
+                    "first_document.info.participants.turretTakedowns": 1,
+                    "first_document.info.participants.baronTakedowns": 1,
+                    "first_document.info.participants.championName": 1,
+                    "first_document.info.participants.championId": 1,
+                    "first_document.info.participants.win": 1,
+                    "first_document.info.participants.item0": 1,
+                    "first_document.info.participants.item1": 1,
+                    "first_document.info.participants.item2": 1,
+                    "first_document.info.participants.item3": 1,
+                    "first_document.info.participants.item4": 1,
+                    "first_document.info.participants.item5": 1,
+                    "first_document.info.participants.item6": 1,
+                    "first_document.info.teams.objectives.kills": 1,
+                    "first_document.info.teams.objectives.dragon": 1,
+                    "first_document.info.teams.teamId": 1,
                 }
             },
         ]
