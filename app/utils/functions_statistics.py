@@ -16,6 +16,13 @@ player_infos_keys = [
     "turretTakedowns",
 ]
 
+player_challenges_keys = [
+    "baronTakedowns",
+    "riftHeraldTakedowns",
+    "perfectGame",
+    "soloBaronKills",
+]
+
 team_objectives_key = ["dragon", "baron"]
 
 timestamp_columns = [
@@ -170,6 +177,39 @@ def get_info_team_objectives(
         ):
             objectives = team.get("objectives", {})
             return objectives.get(key, {}).get("kills", 0)
+
+
+def get_info_player_challengers_per_game_mode(
+    puuid: str, row: pandas.Series, keys: list[str]
+):
+    """
+    Obtém as estatísticas de desafios de um jogador em uma partida de League of
+    Legends por modo de jogo.
+
+    Para o jogador identificado pelo PUUID fornecido, a função procura na série de
+    dados da partida por estatísticas de desafios correspondentes às chaves
+    fornecidas. Retorna uma tupla contendo o modo de jogo e um dicionário com as
+    estatísticas de desafios para cada chave.
+
+    Parâmetros:
+    - puuid (str): O identificador único (PUUID) do jogador de League of Legends.
+    - row (pandas.Series): Uma linha do DataFrame contendo informações sobre a
+      partida de League of Legends.
+    - keys (list): Uma lista de chaves representando os desafios desejados.
+
+    Retorna:
+    - tuple: Uma tupla contendo o modo de jogo e um dicionário com as estatísticas
+      de desafios para cada chave, correspondentes ao participante identificado
+      pelo PUUID na partida.
+    """
+    game_mode = row.get("info.gameMode")
+    participants = row.get("info.participants", [])
+    for participant in participants:
+        if participant.get("puuid") == puuid:
+            return (
+                game_mode,
+                {key: participant.get("challenges", {}).get(key, 0) for key in keys},
+            )
 
 
 def get_infos_parcipant_value_in_list(
@@ -575,6 +615,27 @@ def get_itens_statistics(puuid: str, df: pandas.DataFrame) -> dict:
 
 
 def get_infos_by_team(df: pandas.DataFrame, df_team: pandas.DataFrame) -> dict:
+    """
+    Calcula estatísticas globais de objetivos por equipe em partidas de League
+    of Legends.
+
+    A função utiliza a função auxiliar 'get_info_team_objectives' para obter a
+    quantidade total de kills associada a objetivos específicos de equipe para
+    todas as partidas no DataFrame 'df'. Os resultados são consolidados em um
+    dicionário onde as chaves são os objetivos de equipe e os valores são as
+    quantidades totais de kills para cada objetivo.
+
+    Parâmetros:
+    - df (pandas.DataFrame): O DataFrame contendo informações sobre as partidas
+      de League of Legends.
+    - df_team (pandas.DataFrame): O DataFrame contendo informações sobre as
+      equipes que participaram das partidas de League of Legends.
+
+    Retorna:
+    - dict: Um dicionário contendo estatísticas globais de kills associadas a
+      objetivos de equipe para todas as partidas, onde as chaves são os objetivos
+      de equipe e os valores são as quantidades totais de kills para cada objetivo.
+    """
     return {
         key: int(
             df.apply(
@@ -624,6 +685,27 @@ def get_other_total(puuid, df: pandas.DataFrame) -> dict:
     }
 
 
+def get_challenges_per_mode(puuid: str, df: pandas.DataFrame):
+    dict_challenges = df.apply(
+        lambda row: get_info_player_challengers_per_game_mode(
+            puuid, row, player_challenges_keys
+        ),
+        axis=1,
+    )
+
+    df_result = pandas.DataFrame(
+        dict_challenges.to_list(), columns=["gameMode", "valores"]
+    )
+    df_result = (
+        pandas.concat([df_result, pandas.json_normalize(df_result["valores"])], axis=1)
+        .drop("valores", axis=1)
+        .groupby(by="gameMode")
+        .sum()
+    )
+
+    return df_result.to_dict()
+
+
 def create_rewind(puuid: str, timestamp_statistic: int = None):
     list_matchs = find_matches_by_puuid(puuid, timestamp_statistic)
     matchs_data_frame = pandas.DataFrame(list_matchs)
@@ -644,6 +726,9 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         ).to_list(),
         columns=["matchId", "teamId"],
     )
+
+    challenges = get_challenges_per_mode(puuid, normalized_matchs_data_frame)
+
     dict_kda = get_player_kda_per_mode(puuid, normalized_matchs_data_frame)
     dict_side = game_by_side_per_mode(puuid, normalized_matchs_data_frame)
     dict_multi_kills = get_multi_kills_per_mode(puuid, normalized_matchs_data_frame)
@@ -667,6 +752,7 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "general_infos": infos,
         "itens_statistics": itens_statistics,
         "team_statistics": team_statistics,
+        "challenges": challenges,
         **other_totals,
     }
     return convert_to_serializable(result_dict)
