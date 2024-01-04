@@ -120,6 +120,10 @@ async def summoner_statistics(summoner_name: str) -> dict:
     Returns:
         dict: Retorna um dicionários mostrando as estatisticas do jogador durante o ano.
     """
+    with open("./utils/statistics_example.json") as f:
+        statistics = json.load(f)
+    if statistics:
+        return JSONResponse(content=statistics)
     return {"message": "Estatistica ainda não gerada!"}
 
 
