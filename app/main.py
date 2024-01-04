@@ -110,7 +110,7 @@ async def delete_task_from_id(task_id: str) -> dict:
 
 
 @app.get("/summoner_statistics")
-async def summoner_statistics(summoner_name: str) -> dict:
+async def summoner_statistics(summoner_name: str = "NickName#RiotID") -> dict:
     """
     Rota que retorna estatísticas do invocador.
 
@@ -122,8 +122,12 @@ async def summoner_statistics(summoner_name: str) -> dict:
     """
     with open("./utils/statistics_example.json") as f:
         statistics = json.load(f)
+
+    name, riot_id = summoner_name.split("#")
     if statistics:
-        return JSONResponse(content=statistics)
+        return JSONResponse(
+            content={"player_name": name, "riot_id": riot_id, "statistics": statistics}
+        )
     return {"message": "Estatistica ainda não gerada!"}
 
 
