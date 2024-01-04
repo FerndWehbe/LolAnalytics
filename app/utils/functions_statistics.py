@@ -14,6 +14,17 @@ player_infos_keys = [
     "visionScore",
     "goldEarned",
     "turretTakedowns",
+    "visionScore",
+    "wardsKilled",
+    "wardsPlaced",
+    "damageSelfMitigated",
+    "killingSprees",
+    "largestCriticalStrike",
+    "largestKillingSpree",
+    "objectivesStolen",
+    "totalMinionsKilled",
+    "totalTimeCCDealt",
+    "totalAllyJungleMinionsKilled",
 ]
 
 player_challenges_keys = [
@@ -609,7 +620,9 @@ def get_itens_statistics(puuid: str, df: pandas.DataFrame) -> dict:
     for key in dict_list_itens.keys():
         dict_list_itens[key]["TOTAL"] = list(chain(*dict_list_itens[key].values()))
     dict_itens_most_used = {
-        key: mode(value) for key, value in dict_list_itens["list_itens"].items()
+        key: mode(value)
+        for key, value in dict_list_itens["list_itens"].items()
+        if value
     }
     return dict_itens_most_used
 
