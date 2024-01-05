@@ -720,28 +720,7 @@ def get_player_win_rate_per_role(puuid: str, df: pandas.DataFrame) -> dict:
     return (df_roles.groupby("role")["win"].mean() * 100).to_dict()
 
 
-def get_other_total(puuid, df: pandas.DataFrame) -> dict:
-    """
-    Obtém estatísticas totais por modo de jogo para um jogador específico em
-    diversas categorias.
-
-    A função utiliza a função auxiliar 'get_info_participant_value_per_mode' para
-    obter estatísticas específicas para cada modo de jogo. Os resultados são
-    consolidados em um dicionário onde as chaves são as categorias de estatísticas
-    e os valores são dicionários contendo as estatísticas totais para cada modo de
-    jogo.
-
-    Parâmetros:
-    - puuid (str): O identificador único (PUUID) do jogador de League of Legends.
-    - df (pandas.DataFrame): O DataFrame contendo informações sobre as partidas
-      de League of Legends.
-
-    Retorna:
-    - dict: Um dicionário contendo estatísticas totais por modo de jogo para um
-      jogador específico em diversas categorias. As chaves são as categorias de
-      estatísticas e os valores são dicionários contendo as estatísticas totais
-      para cada modo de jogo.
-    """
+def get_other_stats(puuid, df: pandas.DataFrame, calculation_function) -> dict:
     other_statistics = {}
     for key in player_infos_keys:
         other_statistics.update(
@@ -756,16 +735,20 @@ def get_other_total(puuid, df: pandas.DataFrame) -> dict:
                     columns=["gameMode", key],
                 )
                 .groupby(by="gameMode")
-                .sum()
+                .agg(calculation_function)
                 .to_dict()
             )
         )
 
-    # other_statistics["goldWasted"] = (
-    #     other_statistics["goldEarned"] - other_statistics["goldSpent"]
-    # )
-
     return other_statistics
+
+
+def get_other_mean(puuid, df: pandas.DataFrame) -> dict:
+    return get_other_stats(puuid, df, 'mean')
+
+
+def get_other_total(puuid, df: pandas.DataFrame) -> dict:
+    return get_other_stats(puuid, df, 'sum')
 
 
 def get_challenges_per_mode(puuid: str, df: pandas.DataFrame):
@@ -824,6 +807,8 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
     team_statistics = get_infos_by_team(normalized_matchs_data_frame, df_team_played)
 
     other_totals = get_other_total(puuid, normalized_matchs_data_frame)
+    
+    other_means = get_other_mean(puuid, normalized_matchs_data_frame)
 
     infos = general_infos(normalized_matchs_data_frame)
 
@@ -844,6 +829,7 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "team_statistics": team_statistics,
         "challenges": challenges,
         "other_totals": other_totals,
+        "other_means": other_means,
         "other_infos_players": other_infos_players,
         "player_win_rate": dict_player_win_rate,
     }
