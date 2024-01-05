@@ -7,13 +7,15 @@ import pandas
 from mongo import find_matches_by_puuid
 
 player_infos_keys = [
-    "totalDamageDealt",
-    "totalDamageDealtToChampions",
+    "firstBloodKill",
+    "firstTowerKill",
+    "goldEarned",
+    "goldSpent",
     "magicDamageDealt",
     "magicDamageDealtToChampions",
+    "totalDamageDealt",
+    "totalDamageDealtToChampions",
     "totalHealsOnTeammates",
-    "visionScore",
-    "goldEarned",
     "turretTakedowns",
     "visionScore",
     "wardsKilled",
@@ -726,8 +728,8 @@ def get_infos_other_players_frequency(
     ).most_common(5)
 
     return {
-        "most_commoms_player": most_commom_player,
-        "most_commoms_player_same_time": most_commoms_player_same_time,
+        "most_commoms_player": dict(most_commom_player),
+        "most_commoms_player_same_time": dict(most_commoms_player_same_time),
     }
 
 
@@ -811,12 +813,51 @@ def get_other_stats(puuid, df: pandas.DataFrame, calculation_function) -> dict:
     return other_statistics
 
 
+def get_gold_wasted(dict_gold_earned: dict, dict_gold_spent: dict) -> dict:
+    return {
+        key: dict_gold_earned.get(key, 0) - dict_gold_spent.get(key, 0)
+        for key in dict_gold_earned.keys()
+    }
+
+
 def get_other_mean(puuid, df: pandas.DataFrame) -> dict:
     return get_other_stats(puuid, df, "mean")
 
 
 def get_other_total(puuid, df: pandas.DataFrame) -> dict:
-    return get_other_stats(puuid, df, "sum")
+    other_status = get_other_stats(puuid, df, "sum")
+    other_status["goldWasted"] = get_gold_wasted(
+        other_status["goldEarned"], other_status["goldSpent"]
+    )
+    return other_status
+
+
+def get_team_bans(puuid: str, row: pandas.Series) -> list:
+    participants = row.get("info.participants", [])
+    teams = row.get("info.teams")
+    for participant in participants:
+        if participant.get("puuid") == puuid:
+            team_id = participant.get("teamId")
+            for team in teams:
+                if team.get("teamId") == team_id:
+                    return [ban.get("championId") for ban in team.get("bans", [])]
+    return []
+
+
+def get_top_5_banned_champ_in_team(puuid: str, df: pandas.DataFrame) -> dict:
+    df_bans = pandas.DataFrame(
+        df.apply(lambda row: get_team_bans(puuid, row), axis=1),
+        columns=["list_bans"],
+    )
+    return dict(
+        Counter(
+            chain(
+                *df_bans[~df_bans["list_bans"].apply(lambda x: len(x) == 0)][
+                    "list_bans"
+                ].to_list()
+            )
+        ).most_common(5)
+    )
 
 
 def get_challenges_per_mode(puuid: str, df: pandas.DataFrame):
@@ -891,6 +932,10 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         puuid, normalized_matchs_data_frame
     )
 
+    dict_top_5_team_bans = get_top_5_banned_champ_in_team(
+        puuid, normalized_matchs_data_frame
+    )
+
     result_dict = {
         "kda_infos": transpose_dict(dict_kda),
         "side_infos": transpose_dict(dict_side),
@@ -905,5 +950,7 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "other_infos_players": other_infos_players,
         "player_role_win_info": dict_player_role_win_info,
         "most_played_champ": most_played_champ,
+        "dict_top_5_team_bans": dict_top_5_team_bans,
     }
+
     return convert_to_serializable(result_dict)
