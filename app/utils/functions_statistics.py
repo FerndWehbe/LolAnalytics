@@ -681,21 +681,30 @@ def get_other_total(puuid, df: pandas.DataFrame) -> dict:
       estatísticas e os valores são dicionários contendo as estatísticas totais
       para cada modo de jogo.
     """
-    return {
-        key: add_total_in_dict(
-            pandas.DataFrame(
-                df.apply(
-                    lambda row: get_info_participant_value_per_mode(puuid, row, key),
-                    axis=1,
-                ).to_list(),
-                columns=["gameMode", key],
+    other_statistics = {}
+    for key in player_infos_keys:
+        other_statistics.update(
+            add_total_in_dict(
+                pandas.DataFrame(
+                    df.apply(
+                        lambda row: get_info_participant_value_per_mode(
+                            puuid, row, key
+                        ),
+                        axis=1,
+                    ).to_list(),
+                    columns=["gameMode", key],
+                )
+                .groupby(by="gameMode")
+                .sum()
+                .to_dict()
             )
-            .groupby(by="gameMode")
-            .sum()
-            .to_dict()
         )
-        for key in player_infos_keys
-    }
+
+    other_statistics["goldWasted"] = (
+        other_statistics["goldEarned"] - other_statistics["goldSpent"]
+    )
+
+    return other_statistics
 
 
 def get_challenges_per_mode(puuid: str, df: pandas.DataFrame):
@@ -766,6 +775,6 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "itens_statistics": itens_statistics,
         "team_statistics": team_statistics,
         "challenges": challenges,
-        **other_totals,
+        "other_totals": other_totals,
     }
     return convert_to_serializable(result_dict)
