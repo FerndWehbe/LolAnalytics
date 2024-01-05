@@ -703,21 +703,61 @@ def get_infos_other_players_frequency(
     }
 
 
-def get_player_role_win(puuid: str, row: pandas.Series):
+def get_player_role_win_info(puuid: str, row: pandas.Series):
+    """
+    Obtém informações sobre a vitória e posição de um jogador em uma partida de
+    League of Legends.
+
+    Para o jogador identificado pelo PUUID fornecido, a função procura na série de
+    dados da partida por informações correspondentes à vitória e posição do
+    participante. Retorna uma tupla contendo as informações de vitória e posição.
+
+    Parâmetros:
+    - puuid (str): O identificador único (PUUID) do jogador de League of Legends.
+    - row (pandas.Series): Uma linha do DataFrame contendo informações sobre a
+      partida de League of Legends.
+
+    Retorna:
+    - tuple: Uma tupla contendo informações sobre a vitória e posição do jogador
+      na partida, ou (None, None) se o jogador não for encontrado na partida.
+    """
     participants = row.get("info.participants", [])
     for participant in participants:
         if participant.get("puuid") == puuid:
             return (participant.get("win", None), participant.get("teamPosition", None))
 
 
-def get_player_win_rate_per_role(puuid: str, df: pandas.DataFrame) -> dict:
+def get_player_info_per_role(puuid: str, df: pandas.DataFrame) -> dict:
+    """
+    Calcula estatísticas por posição de um jogador em partidas de League of Legends.
+
+    A função utiliza a função auxiliar 'get_player_role_win_info' para obter informações
+    sobre a vitória e posição de um jogador em cada partida. Os resultados são
+    consolidados em um dicionário onde as chaves são as posições e os valores são
+    dicionários contendo a quantidade de partidas jogadas e a taxa de vitória para
+    cada posição.
+
+    Parâmetros:
+    - puuid (str): O identificador único (PUUID) do jogador de League of Legends.
+    - df (pandas.DataFrame): O DataFrame contendo informações sobre as partidas
+      de League of Legends.
+
+    Retorna:
+    - dict: Um dicionário contendo estatísticas por posição de um jogador em
+      partidas de League of Legends. As chaves são as posições e os valores são
+      dicionários contendo a quantidade de partidas jogadas e a taxa de vitória
+      para cada posição.
+    """
     df_roles = pandas.DataFrame(
-        df.apply(lambda row: get_player_role_win(puuid, row), axis=1).to_list(),
+        df.apply(lambda row: get_player_role_win_info(puuid, row), axis=1).to_list(),
         columns=["win", "role"],
     )
 
     df_roles = df_roles[df_roles["role"] != ""].reset_index(drop=True)
-    return (df_roles.groupby("role")["win"].mean() * 100).to_dict()
+    return {
+        "amount_matchs": {**df_roles.groupby("role")["win"].count().to_dict()},
+        "win_rate": {**(df_roles.groupby("role")["win"].mean() * 100).to_dict()},
+    }
 
 
 def get_other_stats(puuid, df: pandas.DataFrame, calculation_function) -> dict:
@@ -744,11 +784,11 @@ def get_other_stats(puuid, df: pandas.DataFrame, calculation_function) -> dict:
 
 
 def get_other_mean(puuid, df: pandas.DataFrame) -> dict:
-    return get_other_stats(puuid, df, 'mean')
+    return get_other_stats(puuid, df, "mean")
 
 
 def get_other_total(puuid, df: pandas.DataFrame) -> dict:
-    return get_other_stats(puuid, df, 'sum')
+    return get_other_stats(puuid, df, "sum")
 
 
 def get_challenges_per_mode(puuid: str, df: pandas.DataFrame):
@@ -807,7 +847,7 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
     team_statistics = get_infos_by_team(normalized_matchs_data_frame, df_team_played)
 
     other_totals = get_other_total(puuid, normalized_matchs_data_frame)
-    
+
     other_means = get_other_mean(puuid, normalized_matchs_data_frame)
 
     infos = general_infos(normalized_matchs_data_frame)
@@ -815,7 +855,7 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
     other_infos_players = get_infos_other_players_frequency(
         puuid, normalized_matchs_data_frame, df_team_played
     )
-    dict_player_win_rate = get_player_win_rate_per_role(
+    dict_player_role_win_info = get_player_info_per_role(
         puuid, normalized_matchs_data_frame
     )
 
@@ -831,6 +871,6 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "other_totals": other_totals,
         "other_means": other_means,
         "other_infos_players": other_infos_players,
-        "player_win_rate": dict_player_win_rate,
+        "player_role_win_info": dict_player_role_win_info,
     }
     return convert_to_serializable(result_dict)
