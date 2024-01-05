@@ -431,6 +431,24 @@ def game_by_side_per_mode(puuid: str, df: pandas.DataFrame) -> dict:
     return dict_side
 
 
+def get_infos_player_champion_per_mode(puuid: str, df: pandas.DataFrame) -> dict:
+    champion_most_played = (
+        pandas.DataFrame(
+            df.apply(
+                lambda row: get_info_participant_value_per_mode(
+                    puuid, row, "championId"
+                ),
+                axis=1,
+            ).to_list(),
+            columns=["gameMode", "championId"],
+        )
+        .groupby(by="gameMode")["championId"]
+        .agg(lambda x: x.mode().iloc[0])
+        .to_dict()
+    )
+    return champion_most_played
+
+
 def get_multi_kills_per_mode(puuid: str, df: pandas.DataFrame) -> dict:
     """
     Calcula o número total de multi-kills (double, triple, quadra, penta) por
@@ -859,6 +877,10 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         puuid, normalized_matchs_data_frame
     )
 
+    most_played_champ = get_infos_player_champion_per_mode(
+        puuid, normalized_matchs_data_frame
+    )
+
     result_dict = {
         "kda_infos": dict_kda,
         "side_infos": dict_side,
@@ -872,5 +894,6 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "other_means": other_means,
         "other_infos_players": other_infos_players,
         "player_role_win_info": dict_player_role_win_info,
+        "most_played_champ": most_played_champ,
     }
     return convert_to_serializable(result_dict)
