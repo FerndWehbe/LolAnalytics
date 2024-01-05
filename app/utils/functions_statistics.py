@@ -1,3 +1,4 @@
+from collections import Counter
 from itertools import chain
 from statistics import mode
 
@@ -659,6 +660,49 @@ def get_infos_by_team(df: pandas.DataFrame, df_team: pandas.DataFrame) -> dict:
     }
 
 
+def get_players_same_team(
+    puuid: str, row: pandas.Series, df_team_played: pandas.DataFrame
+) -> list:
+    match_id = row.get("metadata.matchId")
+    participants = row.get("info.participants")
+    return [
+        participant.get("puuid")
+        for participant in participants
+        if (
+            participant.get("teamId")
+            == df_team_played.loc[df_team_played["matchId"] == match_id, "teamId"].iloc[
+                0
+            ]
+        )
+        and participant.get("puuid") != puuid
+    ]
+
+
+def get_infos_other_players_frequency(
+    puuid: str, df: pandas.DataFrame, df_team_played: pandas.DataFrame
+):
+    most_commom_player = Counter(
+        filter(
+            lambda x: x != puuid,
+            chain(
+                *df.apply(lambda row: row.get("metadata.participants"), axis=1).tolist()
+            ),
+        )
+    ).most_common(5)
+    most_commoms_player_same_time = Counter(
+        chain(
+            *df.apply(
+                lambda row: get_players_same_team(puuid, row, df_team_played), axis=1
+            ).to_list()
+        )
+    ).most_common(5)
+
+    return {
+        "most_commoms_player": most_commom_player,
+        "most_commoms_player_same_time": most_commoms_player_same_time,
+    }
+
+
 def get_other_total(puuid, df: pandas.DataFrame) -> dict:
     """
     Obtém estatísticas totais por modo de jogo para um jogador específico em
@@ -700,9 +744,9 @@ def get_other_total(puuid, df: pandas.DataFrame) -> dict:
             )
         )
 
-    other_statistics["goldWasted"] = (
-        other_statistics["goldEarned"] - other_statistics["goldSpent"]
-    )
+    # other_statistics["goldWasted"] = (
+    #     other_statistics["goldEarned"] - other_statistics["goldSpent"]
+    # )
 
     return other_statistics
 
@@ -766,6 +810,10 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
 
     infos = general_infos(normalized_matchs_data_frame)
 
+    other_infos_players = get_infos_other_players_frequency(
+        puuid, normalized_matchs_data_frame, df_team_played
+    )
+
     result_dict = {
         "kda_infos": dict_kda,
         "side_infos": dict_side,
@@ -776,5 +824,6 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "team_statistics": team_statistics,
         "challenges": challenges,
         "other_totals": other_totals,
+        "other_infos_players": other_infos_players,
     }
     return convert_to_serializable(result_dict)
