@@ -65,6 +65,16 @@ def convert_to_serializable(dict_convert: dict):
     return dict_convert
 
 
+def transpose_dict(dict_data):
+    new_dict = {}
+    for key, value in dict_data.items():
+        for sub_key, sub_value in value.items():
+            if sub_key not in new_dict:
+                new_dict[sub_key] = {}
+            new_dict[sub_key][key] = sub_value
+    return new_dict
+
+
 def add_total_in_dict(dict_data: dict) -> dict:
     """
     Adiciona a chave 'TOTAL' em cada subdicionário de um dicionário, representando
@@ -882,9 +892,9 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
     )
 
     result_dict = {
-        "kda_infos": dict_kda,
-        "side_infos": dict_side,
-        "multi_kills_infos": dict_multi_kills,
+        "kda_infos": transpose_dict(dict_kda),
+        "side_infos": transpose_dict(dict_side),
+        "multi_kills_infos": transpose_dict(dict_multi_kills),
         "first_blood_infos": dict_first_blood,
         "general_infos": infos,
         "itens_statistics": itens_statistics,
