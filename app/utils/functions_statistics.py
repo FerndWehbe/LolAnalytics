@@ -703,6 +703,23 @@ def get_infos_other_players_frequency(
     }
 
 
+def get_player_role_win(puuid: str, row: pandas.Series):
+    participants = row.get("info.participants", [])
+    for participant in participants:
+        if participant.get("puuid") == puuid:
+            return (participant.get("win", None), participant.get("teamPosition", None))
+
+
+def get_player_win_rate_per_role(puuid: str, df: pandas.DataFrame) -> dict:
+    df_roles = pandas.DataFrame(
+        df.apply(lambda row: get_player_role_win(puuid, row), axis=1).to_list(),
+        columns=["win", "role"],
+    )
+
+    df_roles = df_roles[df_roles["role"] != ""].reset_index(drop=True)
+    return (df_roles.groupby("role")["win"].mean() * 100).to_dict()
+
+
 def get_other_total(puuid, df: pandas.DataFrame) -> dict:
     """
     Obtém estatísticas totais por modo de jogo para um jogador específico em
@@ -813,6 +830,9 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
     other_infos_players = get_infos_other_players_frequency(
         puuid, normalized_matchs_data_frame, df_team_played
     )
+    dict_player_win_rate = get_player_win_rate_per_role(
+        puuid, normalized_matchs_data_frame
+    )
 
     result_dict = {
         "kda_infos": dict_kda,
@@ -825,5 +845,6 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "challenges": challenges,
         "other_totals": other_totals,
         "other_infos_players": other_infos_players,
+        "player_win_rate": dict_player_win_rate,
     }
     return convert_to_serializable(result_dict)

@@ -97,6 +97,7 @@ def find_matches_by_puuid(puuid: str, datetimestamp: int = None) -> list[dict]:
                     "first_document.info.participants.championName": 1,
                     "first_document.info.participants.championId": 1,
                     "first_document.info.participants.win": 1,
+                    "first_document.info.participants.teamPosition": 1,
                     "first_document.info.participants.item0": 1,
                     "first_document.info.participants.item1": 1,
                     "first_document.info.participants.item2": 1,
