@@ -41,6 +41,14 @@ def find_match_by_id(match_id: str):
     )
 
 
+def find_rewind_data_by_id(id_rewind: str):
+    return list(
+        db[MONGO_COLLECTION_NAME_REWIND].aggregate(
+            [{"$match": {"_id": ObjectId(id_rewind)}}, {"$project": {"_id": 0}}]
+        )
+    )[0]
+
+
 def find_matches_by_ids(match_ids: list[str]):
     return db[MONGO_COLLECTION_NAME].find(
         {"metadata.matchId": {"$in": match_ids}}, {"_id": 0}

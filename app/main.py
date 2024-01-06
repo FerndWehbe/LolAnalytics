@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from models import Match, Player, PlayerMatchAssociation
-from mongo import find_match_by_id
+from mongo import find_match_by_id, find_rewind_data_by_id
 from repository import get_player, get_player_by_name
 from tasks import get_summoner_info
 from utils import create_rewind
@@ -53,7 +53,8 @@ async def check(name: str, region: str) -> dict:
     player: Player = get_player_by_name(player_name=nick_name)
 
     if player and player.rewind_id is not None:
-        return {"exists": True, "player": player}
+        rewind = find_rewind_data_by_id(player.rewind_id)
+        return {"exists": True, "player": player.to_dict(), "rewind": rewind}
 
     task = get_summoner_info.delay(nick_name, riot_id, region)
 
