@@ -88,6 +88,8 @@ async def get_task_result(task_id: str) -> dict:
             "player": player,
             "task_id": result.get("task_id", None),
         }
+    if task_state == "FAILURE":
+        return {"task_state": task_state, "message": task.result.args[0]}
 
     return {"task_state": task_state, "message": "Processando dados."}
 

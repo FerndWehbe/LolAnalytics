@@ -1,3 +1,5 @@
+from exceptions import PlayerNotFound
+
 from .base_api import BaseRiotApi
 from .summoner_dto import Summoner
 
@@ -21,6 +23,12 @@ class LolApi(BaseRiotApi):
 
         if response.status_code == 200:
             return Summoner(**response.json())
+
+        if response.status_code == 404:
+            raise PlayerNotFound(
+                f"Player de nick {game_name} não encontrado "
+                "ou riot_id {tag_line} está invalido."
+            )
 
         raise Exception(
             f"Falha na requisição para puuid: {puuid}. "
@@ -56,8 +64,8 @@ class LolApi(BaseRiotApi):
         match_region: str = "americas",
         start: int = 0,
         count: int = 20,
-        start_time: int = None,
-        end_time: int = None,
+        startTime: int = None,
+        endTime: int = None,
         queue: int = None,
         type: str = None,
     ):
@@ -65,11 +73,11 @@ class LolApi(BaseRiotApi):
             f"/lol/match/v5/matches/by-puuid/{summoner_puuid}/ids?{start=}&{count=}"
         )
 
-        if start_time:
-            final_url += f"&{start_time=}"
+        if startTime:
+            final_url += f"&{startTime=}"
 
-        if end_time:
-            final_url += f"&{end_time=}"
+        if endTime:
+            final_url += f"&{endTime=}"
 
         if queue:
             final_url += f"&{queue=}"
