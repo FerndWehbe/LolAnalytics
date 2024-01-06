@@ -152,6 +152,13 @@ async def get_match_info_by_match_id(match_id: str) -> dict:
     return JSONResponse(content={"error": "Documento não encontrado"})
 
 
+@app.get("/moc")
+async def moc() -> dict:
+    with open("./utils/statistics_example.json") as f:
+        json_result = json.load(f)
+    return JSONResponse(content=json_result, media_type="application/json")
+
+
 if __name__ == "__main__":
     import uvicorn
 

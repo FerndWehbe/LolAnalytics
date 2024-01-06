@@ -603,11 +603,14 @@ def general_infos(df: pandas.DataFrame) -> dict:
 
     max_matchs_in_one_day = df_infos.groupby(by="info.date").size().max()
 
-    df_infos["info.group"] = (
-        df_infos["info.date"] != df_infos["info.date"].shift()
-    ).cumsum()
+    df_dates = pandas.DataFrame(df_infos["info.date"].unique(), columns=["date"])
+    df_dates["intervals"] = df_dates["date"].diff().dt.days
 
-    max_consecutive_days = df_infos.groupby(by="info.group").size().max()
+    max_consecutive_days = (
+        df_dates.groupby((df_dates["intervals"] != 1).cumsum())["intervals"]
+        .count()
+        .max()
+    )
 
     max_days_without_playing = df_infos["info.gameCreation"].diff().dt.days.max()
     max_days_without_playing = (
@@ -928,7 +931,13 @@ def get_builds_in_win_with_champ_per_mode(
             return (
                 game_mode,
                 champion_id.get(game_mode, None),
-                sorted({participant.get(item) for item in itens_keys}),
+                sorted(
+                    {
+                        participant.get(item)
+                        for item in itens_keys
+                        if participant.get(item) != 0
+                    }
+                ),
             )
     return []
 
