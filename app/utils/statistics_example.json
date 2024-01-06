@@ -5,8 +5,8 @@
     "name": "404N1ckNotFound",
     "region": "br1",
     "riot_id": "Fernd",
-    "update": "2024-01-06T05:25:10.231530",
-    "rewind_id": "6598e436fdaa79aef1a149b2"
+    "update": "2024-01-06T18:32:19.643677",
+    "rewind_id": "65999cb35524360d0e6eaeab"
   },
   "rewind": {
     "kda_infos": {
@@ -192,368 +192,606 @@
         "URF": 0
       }
     },
-    "other_totals": {
+    "other_values": {
       "firstBloodKill": {
-        "ARAM": 78,
-        "CHERRY": 8,
-        "CLASSIC": 21,
-        "NEXUSBLITZ": 1,
-        "ONEFORALL": 3,
-        "URF": 63,
-        "TOTAL": 174
+        "ARAM": [
+          78,
+          0.14
+        ],
+        "CHERRY": [
+          8,
+          0.18
+        ],
+        "CLASSIC": [
+          21,
+          0.11
+        ],
+        "NEXUSBLITZ": [
+          1,
+          0.06
+        ],
+        "ONEFORALL": [
+          3,
+          0.19
+        ],
+        "URF": [
+          63,
+          0.19
+        ],
+        "TOTAL": [
+          174,
+          0.87
+        ]
       },
       "firstTowerKill": {
-        "ARAM": 55,
-        "CHERRY": 0,
-        "CLASSIC": 15,
-        "NEXUSBLITZ": 0,
-        "ONEFORALL": 0,
-        "URF": 37,
-        "TOTAL": 107
+        "ARAM": [
+          55,
+          0.1
+        ],
+        "CHERRY": [
+          0,
+          0
+        ],
+        "CLASSIC": [
+          15,
+          0.08
+        ],
+        "NEXUSBLITZ": [
+          0,
+          0
+        ],
+        "ONEFORALL": [
+          0,
+          0
+        ],
+        "URF": [
+          37,
+          0.11
+        ],
+        "TOTAL": [
+          107,
+          0.29
+        ]
       },
       "goldEarned": {
-        "ARAM": 8311698,
-        "CHERRY": 791958,
-        "CLASSIC": 2291439,
-        "NEXUSBLITZ": 215447,
-        "ONEFORALL": 254000,
-        "URF": 5437658,
-        "TOTAL": 17302200
+        "ARAM": [
+          8311698,
+          15195.06
+        ],
+        "CHERRY": [
+          791958,
+          17599.07
+        ],
+        "CLASSIC": [
+          2291439,
+          12386.16
+        ],
+        "NEXUSBLITZ": [
+          215447,
+          12673.35
+        ],
+        "ONEFORALL": [
+          254000,
+          15875
+        ],
+        "URF": [
+          5437658,
+          16628.92
+        ],
+        "TOTAL": [
+          17302200,
+          90357.56
+        ]
       },
       "goldSpent": {
-        "ARAM": 7496448,
-        "CHERRY": 761600,
-        "CLASSIC": 2085466,
-        "NEXUSBLITZ": 191337,
-        "ONEFORALL": 234546,
-        "URF": 4817096,
-        "TOTAL": 15586493
+        "ARAM": [
+          7496448,
+          13704.66
+        ],
+        "CHERRY": [
+          761600,
+          16924.44
+        ],
+        "CLASSIC": [
+          2085466,
+          11272.79
+        ],
+        "NEXUSBLITZ": [
+          191337,
+          11255.12
+        ],
+        "ONEFORALL": [
+          234546,
+          14659.12
+        ],
+        "URF": [
+          4817096,
+          14731.18
+        ],
+        "TOTAL": [
+          15586493,
+          82547.31
+        ]
       },
       "magicDamageDealt": {
-        "ARAM": 24487546,
-        "CHERRY": 1498953,
-        "CLASSIC": 6316862,
-        "NEXUSBLITZ": 811315,
-        "ONEFORALL": 867117,
-        "URF": 19210872,
-        "TOTAL": 53192665
+        "ARAM": [
+          24487546,
+          44766.99
+        ],
+        "CHERRY": [
+          1498953,
+          33310.07
+        ],
+        "CLASSIC": [
+          6316862,
+          34145.2
+        ],
+        "NEXUSBLITZ": [
+          811315,
+          47724.41
+        ],
+        "ONEFORALL": [
+          867117,
+          54194.81
+        ],
+        "URF": [
+          19210872,
+          58748.84
+        ],
+        "TOTAL": [
+          53192665,
+          272890.33
+        ]
       },
       "magicDamageDealtToChampions": {
-        "ARAM": 8857919,
-        "CHERRY": 959057,
-        "CLASSIC": 1428163,
-        "NEXUSBLITZ": 256805,
-        "ONEFORALL": 210478,
-        "URF": 4762829,
-        "TOTAL": 16475251
+        "ARAM": [
+          8857919,
+          16193.64
+        ],
+        "CHERRY": [
+          959057,
+          21312.38
+        ],
+        "CLASSIC": [
+          1428163,
+          7719.8
+        ],
+        "NEXUSBLITZ": [
+          256805,
+          15106.18
+        ],
+        "ONEFORALL": [
+          210478,
+          13154.88
+        ],
+        "URF": [
+          4762829,
+          14565.23
+        ],
+        "TOTAL": [
+          16475251,
+          88052.09
+        ]
       },
       "totalDamageDealt": {
-        "ARAM": 47693058,
-        "CHERRY": 2864606,
-        "CLASSIC": 26328427,
-        "NEXUSBLITZ": 1307332,
-        "ONEFORALL": 1820166,
-        "URF": 39317379,
-        "TOTAL": 119330968
+        "ARAM": [
+          47693058,
+          87190.23
+        ],
+        "CHERRY": [
+          2864606,
+          63657.91
+        ],
+        "CLASSIC": [
+          26328427,
+          142315.82
+        ],
+        "NEXUSBLITZ": [
+          1307332,
+          76901.88
+        ],
+        "ONEFORALL": [
+          1820166,
+          113760.38
+        ],
+        "URF": [
+          39317379,
+          120236.63
+        ],
+        "TOTAL": [
+          119330968,
+          604062.86
+        ]
       },
       "totalDamageDealtToChampions": {
-        "ARAM": 17424085,
-        "CHERRY": 1675594,
-        "CLASSIC": 4593889,
-        "NEXUSBLITZ": 376136,
-        "ONEFORALL": 412702,
-        "URF": 9654123,
-        "TOTAL": 34136529
+        "ARAM": [
+          17424085,
+          31853.9
+        ],
+        "CHERRY": [
+          1675594,
+          37235.42
+        ],
+        "CLASSIC": [
+          4593889,
+          24831.83
+        ],
+        "NEXUSBLITZ": [
+          376136,
+          22125.65
+        ],
+        "ONEFORALL": [
+          412702,
+          25793.88
+        ],
+        "URF": [
+          9654123,
+          29523.31
+        ],
+        "TOTAL": [
+          34136529,
+          171363.99
+        ]
       },
       "totalHealsOnTeammates": {
-        "ARAM": 157708,
-        "CHERRY": 46456,
-        "CLASSIC": 68751,
-        "NEXUSBLITZ": 9022,
-        "ONEFORALL": 0,
-        "URF": 89505,
-        "TOTAL": 371442
+        "ARAM": [
+          157708,
+          288.31
+        ],
+        "CHERRY": [
+          46456,
+          1032.36
+        ],
+        "CLASSIC": [
+          68751,
+          371.63
+        ],
+        "NEXUSBLITZ": [
+          9022,
+          530.71
+        ],
+        "ONEFORALL": [
+          0,
+          0
+        ],
+        "URF": [
+          89505,
+          273.72
+        ],
+        "TOTAL": [
+          371442,
+          2496.72
+        ]
       },
       "turretTakedowns": {
-        "ARAM": 1007,
-        "CHERRY": 0,
-        "CLASSIC": 499,
-        "NEXUSBLITZ": 19,
-        "ONEFORALL": 39,
-        "URF": 838,
-        "TOTAL": 2402
+        "ARAM": [
+          1007,
+          1.84
+        ],
+        "CHERRY": [
+          0,
+          0
+        ],
+        "CLASSIC": [
+          499,
+          2.7
+        ],
+        "NEXUSBLITZ": [
+          19,
+          1.12
+        ],
+        "ONEFORALL": [
+          39,
+          2.44
+        ],
+        "URF": [
+          838,
+          2.56
+        ],
+        "TOTAL": [
+          2402,
+          10.66
+        ]
       },
       "visionScore": {
-        "ARAM": 93,
-        "CHERRY": 0,
-        "CLASSIC": 3683,
-        "NEXUSBLITZ": 80,
-        "ONEFORALL": 183,
-        "URF": 7667,
-        "TOTAL": 11706
+        "ARAM": [
+          93,
+          0.17
+        ],
+        "CHERRY": [
+          0,
+          0
+        ],
+        "CLASSIC": [
+          3683,
+          19.91
+        ],
+        "NEXUSBLITZ": [
+          80,
+          4.71
+        ],
+        "ONEFORALL": [
+          183,
+          11.44
+        ],
+        "URF": [
+          7667,
+          23.45
+        ],
+        "TOTAL": [
+          11706,
+          59.67
+        ]
       },
       "wardsKilled": {
-        "ARAM": 0,
-        "CHERRY": 0,
-        "CLASSIC": 252,
-        "NEXUSBLITZ": 3,
-        "ONEFORALL": 3,
-        "URF": 193,
-        "TOTAL": 451
+        "ARAM": [
+          0,
+          0
+        ],
+        "CHERRY": [
+          0,
+          0
+        ],
+        "CLASSIC": [
+          252,
+          1.36
+        ],
+        "NEXUSBLITZ": [
+          3,
+          0.18
+        ],
+        "ONEFORALL": [
+          3,
+          0.19
+        ],
+        "URF": [
+          193,
+          0.59
+        ],
+        "TOTAL": [
+          451,
+          2.32
+        ]
       },
       "wardsPlaced": {
-        "ARAM": 0,
-        "CHERRY": 0,
-        "CLASSIC": 1899,
-        "NEXUSBLITZ": 106,
-        "ONEFORALL": 114,
-        "URF": 4305,
-        "TOTAL": 6424
+        "ARAM": [
+          0,
+          0
+        ],
+        "CHERRY": [
+          0,
+          0
+        ],
+        "CLASSIC": [
+          1899,
+          10.26
+        ],
+        "NEXUSBLITZ": [
+          106,
+          6.24
+        ],
+        "ONEFORALL": [
+          114,
+          7.12
+        ],
+        "URF": [
+          4305,
+          13.17
+        ],
+        "TOTAL": [
+          6424,
+          36.79
+        ]
       },
       "damageSelfMitigated": {
-        "ARAM": 14482197,
-        "CHERRY": 1452952,
-        "CLASSIC": 2192462,
-        "NEXUSBLITZ": 247537,
-        "ONEFORALL": 363554,
-        "URF": 6346578,
-        "TOTAL": 25085280
+        "ARAM": [
+          14482197,
+          26475.68
+        ],
+        "CHERRY": [
+          1452952,
+          32287.82
+        ],
+        "CLASSIC": [
+          2192462,
+          11851.15
+        ],
+        "NEXUSBLITZ": [
+          247537,
+          14561
+        ],
+        "ONEFORALL": [
+          363554,
+          22722.12
+        ],
+        "URF": [
+          6346578,
+          19408.5
+        ],
+        "TOTAL": [
+          25085280,
+          127306.27
+        ]
       },
       "killingSprees": {
-        "ARAM": 1884,
-        "CHERRY": 80,
-        "CLASSIC": 370,
-        "NEXUSBLITZ": 24,
-        "ONEFORALL": 33,
-        "URF": 862,
-        "TOTAL": 3253
+        "ARAM": [
+          1884,
+          3.44
+        ],
+        "CHERRY": [
+          80,
+          1.78
+        ],
+        "CLASSIC": [
+          370,
+          2
+        ],
+        "NEXUSBLITZ": [
+          24,
+          1.41
+        ],
+        "ONEFORALL": [
+          33,
+          2.06
+        ],
+        "URF": [
+          862,
+          2.64
+        ],
+        "TOTAL": [
+          3253,
+          13.33
+        ]
       },
       "objectivesStolen": {
-        "ARAM": 0,
-        "CHERRY": 0,
-        "CLASSIC": 1,
-        "NEXUSBLITZ": 0,
-        "ONEFORALL": 1,
-        "URF": 9,
-        "TOTAL": 11
+        "ARAM": [
+          0,
+          0
+        ],
+        "CHERRY": [
+          0,
+          0
+        ],
+        "CLASSIC": [
+          1,
+          0.01
+        ],
+        "NEXUSBLITZ": [
+          0,
+          0
+        ],
+        "ONEFORALL": [
+          1,
+          0.06
+        ],
+        "URF": [
+          9,
+          0.03
+        ],
+        "TOTAL": [
+          11,
+          0.1
+        ]
       },
       "totalMinionsKilled": {
-        "ARAM": 33416,
-        "CHERRY": 30,
-        "CLASSIC": 29634,
-        "NEXUSBLITZ": 771,
-        "ONEFORALL": 1375,
-        "URF": 29406,
-        "TOTAL": 94632
+        "ARAM": [
+          33416,
+          61.09
+        ],
+        "CHERRY": [
+          30,
+          0.67
+        ],
+        "CLASSIC": [
+          29634,
+          160.18
+        ],
+        "NEXUSBLITZ": [
+          771,
+          45.35
+        ],
+        "ONEFORALL": [
+          1375,
+          85.94
+        ],
+        "URF": [
+          29406,
+          89.93
+        ],
+        "TOTAL": [
+          94632,
+          443.16
+        ]
       },
       "totalTimeCCDealt": {
-        "ARAM": 96938,
-        "CHERRY": 5773,
-        "CLASSIC": 30841,
-        "NEXUSBLITZ": 2382,
-        "ONEFORALL": 2548,
-        "URF": 64012,
-        "TOTAL": 202494
+        "ARAM": [
+          96938,
+          177.22
+        ],
+        "CHERRY": [
+          5773,
+          128.29
+        ],
+        "CLASSIC": [
+          30841,
+          166.71
+        ],
+        "NEXUSBLITZ": [
+          2382,
+          140.12
+        ],
+        "ONEFORALL": [
+          2548,
+          159.25
+        ],
+        "URF": [
+          64012,
+          195.76
+        ],
+        "TOTAL": [
+          202494,
+          967.34
+        ]
       },
       "totalAllyJungleMinionsKilled": {
-        "ARAM": 0,
-        "CHERRY": 0,
-        "CLASSIC": 147,
-        "NEXUSBLITZ": 63,
-        "ONEFORALL": 0,
-        "URF": 0,
-        "TOTAL": 210
+        "ARAM": [
+          0,
+          0
+        ],
+        "CHERRY": [
+          0,
+          0
+        ],
+        "CLASSIC": [
+          147,
+          0.79
+        ],
+        "NEXUSBLITZ": [
+          63,
+          3.71
+        ],
+        "ONEFORALL": [
+          0,
+          0
+        ],
+        "URF": [
+          0,
+          0
+        ],
+        "TOTAL": [
+          210,
+          4.5
+        ]
       },
       "goldWasted": {
-        "ARAM": 815250,
-        "CHERRY": 30358,
-        "CLASSIC": 205973,
-        "NEXUSBLITZ": 24110,
-        "ONEFORALL": 19454,
-        "URF": 620562,
-        "TOTAL": 1715707
-      }
-    },
-    "other_means": {
-      "firstBloodKill": {
-        "ARAM": 0.14,
-        "CHERRY": 0.18,
-        "CLASSIC": 0.11,
-        "NEXUSBLITZ": 0.06,
-        "ONEFORALL": 0.19,
-        "URF": 0.19,
-        "TOTAL": 0.87
-      },
-      "firstTowerKill": {
-        "ARAM": 0.1,
-        "CHERRY": 0,
-        "CLASSIC": 0.08,
-        "NEXUSBLITZ": 0,
-        "ONEFORALL": 0,
-        "URF": 0.11,
-        "TOTAL": 0.29
-      },
-      "goldEarned": {
-        "ARAM": 15195.06,
-        "CHERRY": 17599.07,
-        "CLASSIC": 12386.16,
-        "NEXUSBLITZ": 12673.35,
-        "ONEFORALL": 15875,
-        "URF": 16628.92,
-        "TOTAL": 90357.56
-      },
-      "goldSpent": {
-        "ARAM": 13704.66,
-        "CHERRY": 16924.44,
-        "CLASSIC": 11272.79,
-        "NEXUSBLITZ": 11255.12,
-        "ONEFORALL": 14659.12,
-        "URF": 14731.18,
-        "TOTAL": 82547.31
-      },
-      "magicDamageDealt": {
-        "ARAM": 44766.99,
-        "CHERRY": 33310.07,
-        "CLASSIC": 34145.2,
-        "NEXUSBLITZ": 47724.41,
-        "ONEFORALL": 54194.81,
-        "URF": 58748.84,
-        "TOTAL": 272890.33
-      },
-      "magicDamageDealtToChampions": {
-        "ARAM": 16193.64,
-        "CHERRY": 21312.38,
-        "CLASSIC": 7719.8,
-        "NEXUSBLITZ": 15106.18,
-        "ONEFORALL": 13154.88,
-        "URF": 14565.23,
-        "TOTAL": 88052.09
-      },
-      "totalDamageDealt": {
-        "ARAM": 87190.23,
-        "CHERRY": 63657.91,
-        "CLASSIC": 142315.82,
-        "NEXUSBLITZ": 76901.88,
-        "ONEFORALL": 113760.38,
-        "URF": 120236.63,
-        "TOTAL": 604062.86
-      },
-      "totalDamageDealtToChampions": {
-        "ARAM": 31853.9,
-        "CHERRY": 37235.42,
-        "CLASSIC": 24831.83,
-        "NEXUSBLITZ": 22125.65,
-        "ONEFORALL": 25793.88,
-        "URF": 29523.31,
-        "TOTAL": 171363.99
-      },
-      "totalHealsOnTeammates": {
-        "ARAM": 288.31,
-        "CHERRY": 1032.36,
-        "CLASSIC": 371.63,
-        "NEXUSBLITZ": 530.71,
-        "ONEFORALL": 0,
-        "URF": 273.72,
-        "TOTAL": 2496.72
-      },
-      "turretTakedowns": {
-        "ARAM": 1.84,
-        "CHERRY": 0,
-        "CLASSIC": 2.7,
-        "NEXUSBLITZ": 1.12,
-        "ONEFORALL": 2.44,
-        "URF": 2.56,
-        "TOTAL": 10.66
-      },
-      "visionScore": {
-        "ARAM": 0.17,
-        "CHERRY": 0,
-        "CLASSIC": 19.91,
-        "NEXUSBLITZ": 4.71,
-        "ONEFORALL": 11.44,
-        "URF": 23.45,
-        "TOTAL": 59.67
-      },
-      "wardsKilled": {
-        "ARAM": 0,
-        "CHERRY": 0,
-        "CLASSIC": 1.36,
-        "NEXUSBLITZ": 0.18,
-        "ONEFORALL": 0.19,
-        "URF": 0.59,
-        "TOTAL": 2.32
-      },
-      "wardsPlaced": {
-        "ARAM": 0,
-        "CHERRY": 0,
-        "CLASSIC": 10.26,
-        "NEXUSBLITZ": 6.24,
-        "ONEFORALL": 7.12,
-        "URF": 13.17,
-        "TOTAL": 36.79
-      },
-      "damageSelfMitigated": {
-        "ARAM": 26475.68,
-        "CHERRY": 32287.82,
-        "CLASSIC": 11851.15,
-        "NEXUSBLITZ": 14561,
-        "ONEFORALL": 22722.12,
-        "URF": 19408.5,
-        "TOTAL": 127306.27
-      },
-      "killingSprees": {
-        "ARAM": 3.44,
-        "CHERRY": 1.78,
-        "CLASSIC": 2,
-        "NEXUSBLITZ": 1.41,
-        "ONEFORALL": 2.06,
-        "URF": 2.64,
-        "TOTAL": 13.33
-      },
-      "objectivesStolen": {
-        "ARAM": 0,
-        "CHERRY": 0,
-        "CLASSIC": 0.01,
-        "NEXUSBLITZ": 0,
-        "ONEFORALL": 0.06,
-        "URF": 0.03,
-        "TOTAL": 0.1
-      },
-      "totalMinionsKilled": {
-        "ARAM": 61.09,
-        "CHERRY": 0.67,
-        "CLASSIC": 160.18,
-        "NEXUSBLITZ": 45.35,
-        "ONEFORALL": 85.94,
-        "URF": 89.93,
-        "TOTAL": 443.16
-      },
-      "totalTimeCCDealt": {
-        "ARAM": 177.22,
-        "CHERRY": 128.29,
-        "CLASSIC": 166.71,
-        "NEXUSBLITZ": 140.12,
-        "ONEFORALL": 159.25,
-        "URF": 195.76,
-        "TOTAL": 967.34
-      },
-      "totalAllyJungleMinionsKilled": {
-        "ARAM": 0,
-        "CHERRY": 0,
-        "CLASSIC": 0.79,
-        "NEXUSBLITZ": 3.71,
-        "ONEFORALL": 0,
-        "URF": 0,
-        "TOTAL": 4.5
-      },
-      "goldWasted": {
-        "ARAM": 1490.4,
-        "CHERRY": 674.62,
-        "CLASSIC": 1113.37,
-        "NEXUSBLITZ": 1418.24,
-        "ONEFORALL": 1215.88,
-        "URF": 1897.74,
-        "TOTAL": 7810.25
+        "ARAM": [
+          815250,
+          1490.4
+        ],
+        "CHERRY": [
+          30358,
+          674.62
+        ],
+        "CLASSIC": [
+          205973,
+          1113.37
+        ],
+        "NEXUSBLITZ": [
+          24110,
+          1418.24
+        ],
+        "ONEFORALL": [
+          19454,
+          1215.88
+        ],
+        "URF": [
+          620562,
+          1897.74
+        ],
+        "TOTAL": [
+          1715707,
+          7810.25
+        ]
       }
     },
     "other_maxs": {
@@ -588,13 +826,6 @@
     "other_infos_players": {
       "most_commoms_player": {
         "LI8kS_RGEyc1kqjUFISvCbrFLIYxwue5kzopsTS4a84xsOJk4HDokq1NDuaz1cMjIbs8hXxi75GThg": 554,
-        "tc6vpG9QYq3Tl1DDyiA6Lj_PCm757lpy14-5fmyYJvU9i6o1pKf5TSbYo8XuC6Kofob2uUNxzs0z4A": 94,
-        "hWzVASbaFNE767BI51jlAyM-h6FS8-gV9b0c64I5unV3cUU5LxU4i_CredHPX3xarwRU7Gio5VpSHA": 24,
-        "6_qu8lZH6NmzICOadyqSUvi5ga50_eCD8w3V4-bpY99ImRNvnL9t-WjIcSt-FjSrrqrYZW_1ksXEWw": 21,
-        "K1R0Ye8sIZQwXS7HQno-2xMzgzrZkdxMuAgAJR2P2bCUnc27k1z0d4ZmdY8ByJYpO3tZON-BCs-wIA": 18
-      },
-      "most_commoms_player_same_time": {
-        "LI8kS_RGEyc1kqjUFISvCbrFLIYxwue5kzopsTS4a84xsOJk4HDokq1NDuaz1cMjIbs8hXxi75GThg": 553,
         "tc6vpG9QYq3Tl1DDyiA6Lj_PCm757lpy14-5fmyYJvU9i6o1pKf5TSbYo8XuC6Kofob2uUNxzs0z4A": 94,
         "hWzVASbaFNE767BI51jlAyM-h6FS8-gV9b0c64I5unV3cUU5LxU4i_CredHPX3xarwRU7Gio5VpSHA": 24,
         "6_qu8lZH6NmzICOadyqSUvi5ga50_eCD8w3V4-bpY99ImRNvnL9t-WjIcSt-FjSrrqrYZW_1ksXEWw": 21,
@@ -696,15 +927,15 @@
       }
     },
     "detail_players": {
-      "K1R0Ye8sIZQwXS7HQno-2xMzgzrZkdxMuAgAJR2P2bCUnc27k1z0d4ZmdY8ByJYpO3tZON-BCs-wIA": {
-        "name": "Goiano1",
-        "level": 120,
-        "icon": 1161
-      },
       "hWzVASbaFNE767BI51jlAyM-h6FS8-gV9b0c64I5unV3cUU5LxU4i_CredHPX3xarwRU7Gio5VpSHA": {
         "name": "BlackAnorak",
         "level": 218,
         "icon": 29
+      },
+      "K1R0Ye8sIZQwXS7HQno-2xMzgzrZkdxMuAgAJR2P2bCUnc27k1z0d4ZmdY8ByJYpO3tZON-BCs-wIA": {
+        "name": "Goiano1",
+        "level": 120,
+        "icon": 1161
       },
       "6_qu8lZH6NmzICOadyqSUvi5ga50_eCD8w3V4-bpY99ImRNvnL9t-WjIcSt-FjSrrqrYZW_1ksXEWw": {
         "name": "desolationOfSmau",
@@ -718,7 +949,7 @@
       },
       "LI8kS_RGEyc1kqjUFISvCbrFLIYxwue5kzopsTS4a84xsOJk4HDokq1NDuaz1cMjIbs8hXxi75GThg": {
         "name": "O Sabugador",
-        "level": 152,
+        "level": 153,
         "icon": 4904
       }
     }

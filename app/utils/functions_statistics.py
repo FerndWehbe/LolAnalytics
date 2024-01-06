@@ -6,8 +6,6 @@ import numpy
 import pandas
 from mongo import find_matches_by_puuid
 
-# TODO pegar informações dos players pelo puuid (jogadores mais frequentes)
-
 player_infos_keys = [
     "firstBloodKill",
     "firstTowerKill",
@@ -90,6 +88,19 @@ def format_float_number(dict_data):
         if isinstance(dict_data[key], float):
             dict_data[key] = round(dict_data[key], 2)
     return dict_data
+
+
+def merge_other_values(dict_other_total: dict, dict_other_means: dict) -> dict:
+    dict_others = {}
+    for key in dict_other_total.keys():
+        if key not in dict_others:
+            dict_others[key] = {}
+        for gameMode in dict_other_total[key].keys():
+            dict_others[key][gameMode] = [
+                dict_other_total[key][gameMode],
+                dict_other_means[key][gameMode],
+            ]
+    return dict_others
 
 
 def add_total_in_dict(dict_data: dict) -> dict:
@@ -997,8 +1008,10 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
     team_statistics = get_infos_by_team(normalized_matchs_data_frame, df_team_played)
 
     other_totals = get_other_total(puuid, normalized_matchs_data_frame)
-
     other_means = get_other_mean(puuid, normalized_matchs_data_frame)
+
+    other_values = merge_other_values(other_totals, other_means)
+
     other_max = get_other_max(puuid, normalized_matchs_data_frame)
 
     infos = general_infos(normalized_matchs_data_frame)
@@ -1040,8 +1053,7 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "itens_statistics": itens_statistics,
         "team_statistics": team_statistics,
         "challenges": challenges,
-        "other_totals": other_totals,
-        "other_means": other_means,
+        "other_values": other_values,
         "other_maxs": other_max,
         "other_infos_players": other_infos_players,
         "player_role_win_info": format_float_number(dict_player_role_win_info),
