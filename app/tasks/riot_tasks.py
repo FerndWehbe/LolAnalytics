@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from itertools import chain
 
 from celery import shared_task
 from dotenv import load_dotenv
@@ -91,6 +92,21 @@ def get_player_ranked_infos(lol_api: LolApi, summoner_id: str, region: str):
         queue.get("queueType"): {"tier": queue.get("tier"), "rank": queue.get("rank")}
         for queue in league_infos
     }
+
+
+def get_player_infos_by_puuids(lol_api: LolApi, dict_players: dict, region: str):
+    puuids = set(chain(*[set(values.keys()) for _, values in dict_players.items()]))
+    dict_puuid = {}
+    for puuid in puuids:
+        rate_limiter.make_request()
+        summoner = lol_api.get_summoner_info_by_puuid(puuid, region)
+        dict_puuid[puuid] = {
+            "name": summoner.name,
+            "level": summoner.summoner_level,
+            "icon": summoner.profile_icon_id,
+        }
+
+    return dict_puuid
 
 
 @shared_task
@@ -304,6 +320,12 @@ def generate_rewind(puuid: str, region: str):
     rewind = create_rewind(puuid, get_timestamp_from_year(2023))
 
     rewind["ranked_infos"] = player_ranked
+
+    dict_info_player = get_player_infos_by_puuids(
+        lol_api, rewind["other_infos_players"], region
+    )
+
+    rewind["detail_players"] = dict_info_player
 
     rewind_id = insert_rewind_data(rewind)
     player.rewind_id = str(rewind_id)

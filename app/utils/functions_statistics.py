@@ -6,6 +6,8 @@ import numpy
 import pandas
 from mongo import find_matches_by_puuid
 
+# TODO pegar informações dos players pelo puuid (jogadores mais frequentes)
+
 player_infos_keys = [
     "firstBloodKill",
     "firstTowerKill",

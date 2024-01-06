@@ -27,6 +27,18 @@ class LolApi(BaseRiotApi):
             "Status Code: {response.status_code}"
         )
 
+    def get_summoner_info_by_puuid(self, puuid: str, server_account: str = "br1"):
+        final_url = f"/lol/summoner/v4/summoners/by-puuid/{puuid}"
+        response = self._get(self._get_base_url_region(server_account) + final_url)
+
+        if response.status_code == 200:
+            return Summoner(**response.json())
+
+        raise Exception(
+            f"Falha na requisição para puuid: {puuid}. "
+            "Status Code: {response.status_code}"
+        )
+
     def _get_puuid_by_riot_id(
         self, game_name: str, tag_line: str, server_account: str = "americas"
     ):
