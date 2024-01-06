@@ -314,4 +314,5 @@ def generate_rewind(puuid: str, region: str):
         "mensagem": f"Rewind gerada com sucesso para o jogador {player.name}"
         f"Rewind de id {str(rewind_id)}",
         "dados": {"puuid": puuid},
+        "next_task": "dados_gerados",
     }

@@ -81,6 +81,15 @@ def transpose_dict(dict_data):
     return new_dict
 
 
+def format_float_number(dict_data):
+    for key in dict_data.keys():
+        if isinstance(dict_data[key], dict):
+            format_float_number(dict_data[key])
+        if isinstance(dict_data[key], float):
+            dict_data[key] = round(dict_data[key], 2)
+    return dict_data
+
+
 def add_total_in_dict(dict_data: dict) -> dict:
     """
     Adiciona a chave 'TOTAL' em cada subdicionário de um dicionário, representando
@@ -606,7 +615,7 @@ def general_infos(df: pandas.DataFrame) -> dict:
     )
 
     return {
-        "hours_played": hours_played,
+        "hours_played": round(hours_played, 2),
         "played_per_game_mode": played_per_game_mode,
         "max_matchs_in_one_day": max_matchs_in_one_day,
         "max_consecutive_days": max_consecutive_days,
@@ -834,6 +843,9 @@ def get_other_mean(puuid: str, df: pandas.DataFrame) -> dict:
     other_status["goldWasted"] = get_gold_wasted(
         other_status["goldEarned"], other_status["goldSpent"]
     )
+
+    other_status = format_float_number(other_status)
+
     return other_status
 
 
@@ -1029,7 +1041,7 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "other_means": other_means,
         "other_maxs": other_max,
         "other_infos_players": other_infos_players,
-        "player_role_win_info": dict_player_role_win_info,
+        "player_role_win_info": format_float_number(dict_player_role_win_info),
         "most_played_champ": most_played_champ,
         "top_5_team_bans": dict_top_5_team_bans,
         "build_most_win_rate_with_champ": dict_build_most_win_rate_with_champ,

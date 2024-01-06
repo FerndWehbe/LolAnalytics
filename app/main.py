@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from models import Match, Player, PlayerMatchAssociation
 from mongo import find_match_by_id, find_rewind_data_by_id
-from repository import get_player, get_player_by_name
+from repository import get_player, get_player_by_name_and_region
 from tasks import get_summoner_info
 from utils import create_rewind
 
@@ -50,7 +50,7 @@ async def check(name: str, region: str) -> dict:
         o próprio jogador se existir, ou o ID da tarefa.
     """
     nick_name, riot_id = name.split("#")
-    player: Player = get_player_by_name(player_name=nick_name)
+    player: Player = get_player_by_name_and_region(player_name=nick_name, region=region)
 
     if player and player.rewind_id is not None:
         rewind = find_rewind_data_by_id(player.rewind_id)
@@ -86,7 +86,7 @@ async def get_task_result(task_id: str) -> dict:
             "task_state": task_state,
             "next_task": result["next_task"],
             "player": player,
-            "task_id": result["task_id"],
+            "task_id": result.get("task_id", None),
         }
 
     return {"task_state": task_state, "message": "Processando dados."}
@@ -110,8 +110,10 @@ async def delete_task_from_id(task_id: str) -> dict:
     return {"message": f"Task {task_id} não encontrada"}
 
 
-@app.get("/summoner_statistics")
-async def summoner_statistics(summoner_name: str = "NickName#RiotID") -> dict:
+@app.get("/summoner_statistics/{region}/{summoner_name}")
+async def summoner_statistics(
+    region: str = "br1", summoner_name: str = "NickName#RiotID"
+) -> dict:
     """
     Rota que retorna estatísticas do invocador.
 
@@ -121,10 +123,12 @@ async def summoner_statistics(summoner_name: str = "NickName#RiotID") -> dict:
     Returns:
         dict: Retorna um dicionários mostrando as estatisticas do jogador durante o ano.
     """
-    with open("./utils/statistics_example.json") as f:
-        statistics = json.load(f)
-
     name, riot_id = summoner_name.split("#")
+
+    player = get_player_by_name_and_region(player_name=name, region=region)
+
+    statistics = find_rewind_data_by_id(player.rewind_id)
+
     if statistics:
         return JSONResponse(
             content={"player_name": name, "riot_id": riot_id, "statistics": statistics}

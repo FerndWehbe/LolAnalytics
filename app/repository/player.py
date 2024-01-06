@@ -39,6 +39,15 @@ def get_player_by_name(db: Session, player_name: str) -> Player:
 
 
 @dec_session_local
+def get_player_by_name_and_region(db: Session, player_name: str, region: str) -> Player:
+    return (
+        db.query(Player)
+        .filter(Player.name == player_name, Player.region == region)
+        .first()
+    )
+
+
+@dec_session_local
 def get_matches_not_searched_by_puuid(db: Session, player_puuid: str) -> list[str]:
     sql_query = text(
         """
