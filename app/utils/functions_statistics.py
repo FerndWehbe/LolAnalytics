@@ -737,17 +737,9 @@ def get_infos_other_players_frequency(
             ),
         )
     ).most_common(5)
-    most_commoms_player_same_time = Counter(
-        chain(
-            *df.apply(
-                lambda row: get_players_same_team(puuid, row, df_team_played), axis=1
-            ).to_list()
-        )
-    ).most_common(5)
 
     return {
         "most_commoms_player": dict(most_commom_player),
-        "most_commoms_player_same_time": dict(most_commoms_player_same_time),
     }
 
 
