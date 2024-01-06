@@ -1,7 +1,14 @@
 {
-  "player_name": "404N1ckNotFound",
-  "riot_id": "Fernd",
-  "statistics": {
+  "exists": true,
+  "player": {
+    "puuid": "lkEy6-PARUmXWiUG5LMJojoHW-wM318WP7Wfq4GdZNSMXWO7c4ZYg1ND3BDc0F_vLv98KhbIwoOhVw",
+    "name": "404N1ckNotFound",
+    "region": "br1",
+    "riot_id": "Fernd",
+    "update": "2024-01-06T05:25:10.231530",
+    "rewind_id": "6598e436fdaa79aef1a149b2"
+  },
+  "rewind": {
     "kda_infos": {
       "ARAM": {
         "kills": 7192,
@@ -627,7 +634,6 @@
     },
     "build_most_win_rate_with_champ": {
       "ARAM": [
-        0,
         1028,
         2031,
         2052,
@@ -643,7 +649,6 @@
         226672
       ],
       "CLASSIC": [
-        0,
         1018,
         1055,
         2031,
@@ -652,7 +657,6 @@
         6671
       ],
       "NEXUSBLITZ": [
-        0,
         1052,
         2031,
         3020,
@@ -660,7 +664,6 @@
         6653
       ],
       "ONEFORALL": [
-        0,
         2033,
         3111,
         3152,
@@ -693,30 +696,30 @@
       }
     },
     "detail_players": {
-      "LI8kS_RGEyc1kqjUFISvCbrFLIYxwue5kzopsTS4a84xsOJk4HDokq1NDuaz1cMjIbs8hXxi75GThg": {
-        "name": "O Sabugador",
-        "level": 152,
-        "icon": 4904
-      },
-      "6_qu8lZH6NmzICOadyqSUvi5ga50_eCD8w3V4-bpY99ImRNvnL9t-WjIcSt-FjSrrqrYZW_1ksXEWw": {
-        "name": "desolationOfSmau",
-        "level": 195,
-        "icon": 21
+      "K1R0Ye8sIZQwXS7HQno-2xMzgzrZkdxMuAgAJR2P2bCUnc27k1z0d4ZmdY8ByJYpO3tZON-BCs-wIA": {
+        "name": "Goiano1",
+        "level": 120,
+        "icon": 1161
       },
       "hWzVASbaFNE767BI51jlAyM-h6FS8-gV9b0c64I5unV3cUU5LxU4i_CredHPX3xarwRU7Gio5VpSHA": {
         "name": "BlackAnorak",
         "level": 218,
         "icon": 29
       },
+      "6_qu8lZH6NmzICOadyqSUvi5ga50_eCD8w3V4-bpY99ImRNvnL9t-WjIcSt-FjSrrqrYZW_1ksXEWw": {
+        "name": "desolationOfSmau",
+        "level": 195,
+        "icon": 21
+      },
       "tc6vpG9QYq3Tl1DDyiA6Lj_PCm757lpy14-5fmyYJvU9i6o1pKf5TSbYo8XuC6Kofob2uUNxzs0z4A": {
         "name": "MatryoshkaX",
         "level": 119,
         "icon": 5408
       },
-      "K1R0Ye8sIZQwXS7HQno-2xMzgzrZkdxMuAgAJR2P2bCUnc27k1z0d4ZmdY8ByJYpO3tZON-BCs-wIA": {
-        "name": "Goiano1",
-        "level": 120,
-        "icon": 1161
+      "LI8kS_RGEyc1kqjUFISvCbrFLIYxwue5kzopsTS4a84xsOJk4HDokq1NDuaz1cMjIbs8hXxi75GThg": {
+        "name": "O Sabugador",
+        "level": 152,
+        "icon": 4904
       }
     }
   }

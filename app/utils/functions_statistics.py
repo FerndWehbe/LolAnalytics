@@ -935,7 +935,7 @@ def get_builds_in_win_with_champ_per_mode(
                     {
                         participant.get(item)
                         for item in itens_keys
-                        if participant.get(item) != 0
+                        if participant.get(item)
                     }
                 ),
             )
