@@ -26,7 +26,7 @@ def get_all_players(db: Session) -> list[Player]:
 def update_player(db: Session, player_puuid: str, updated_player: Player) -> Player:
     existing_item = db.query(Player).filter(Player.puuid == player_puuid).first()
     if existing_item:
-        for key, value in updated_player.dict().items():
+        for key, value in updated_player.to_dict().items():
             setattr(existing_item, key, value)
         db.commit()
         db.refresh(existing_item)

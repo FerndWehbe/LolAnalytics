@@ -10,7 +10,8 @@ class Player(Base):
     riot_id = Column(String)
     region = Column(String)
     update = Column(DateTime)
-    rewind_id = Column(DateTime)
+    rewind_id = Column(String)
+    summoner_id = Column(String)
 
     matches = relationship("PlayerMatchAssociation", back_populates="player")
 

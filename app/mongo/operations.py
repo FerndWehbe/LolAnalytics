@@ -1,5 +1,6 @@
 import os
 
+from bson.objectid import ObjectId
 from pymongo import MongoClient
 
 MONGO_DB_USER = os.environ.get("MONGO_INITDB_ROOT_USERNAME", "admin")
@@ -9,6 +10,8 @@ MONGO_DB_PORT = os.environ.get("MONGO_PORT", 27017)
 MONGO_DB_NAME = os.environ.get("MONGO_INITDB_DATABASE", "lolanalytics")
 
 MONGO_COLLECTION_NAME = "lol_matches"
+
+MONGO_COLLECTION_NAME_REWIND = "lol_rewind"
 
 MONGO_DB_URL = (
     f"mongodb://{MONGO_DB_USER}:{MONGO_DB_PASSWORD}@{MONGO_DB_HOST}:{MONGO_DB_PORT}"
@@ -25,6 +28,11 @@ def insert_match_data(match_data: dict) -> None:
 
 def insert_many_matches_data(matches_data: list[dict]) -> None:
     db[MONGO_COLLECTION_NAME].insert_many(matches_data)
+
+
+def insert_rewind_data(rewind_info: dict) -> ObjectId:
+    result = db[MONGO_COLLECTION_NAME_REWIND].insert_one(rewind_info)
+    return result.inserted_id
 
 
 def find_match_by_id(match_id: str):
@@ -107,6 +115,8 @@ def find_matches_by_puuid(puuid: str, datetimestamp: int = None) -> list[dict]:
                     "first_document.info.participants.item5": 1,
                     "first_document.info.participants.item6": 1,
                     "first_document.info.participants.challenges": 1,
+                    "first_document.info.participants.profileIcon": 1,
+                    "first_document.info.participants.summonerLevel": 1,
                     "first_document.info.teams.bans": 1,
                     "first_document.info.teams.objectives.kills": 1,
                     "first_document.info.teams.objectives.dragon": 1,

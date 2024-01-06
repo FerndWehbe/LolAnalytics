@@ -22,12 +22,16 @@ player_infos_keys = [
     "wardsPlaced",
     "damageSelfMitigated",
     "killingSprees",
-    "largestCriticalStrike",
-    "largestKillingSpree",
     "objectivesStolen",
     "totalMinionsKilled",
     "totalTimeCCDealt",
     "totalAllyJungleMinionsKilled",
+]
+
+player_max_infos_keys = [
+    "killingSprees",
+    "largestCriticalStrike",
+    "largestKillingSpree",
 ]
 
 player_challenges_keys = [
@@ -72,8 +76,8 @@ def transpose_dict(dict_data):
     for key, value in dict_data.items():
         for sub_key, sub_value in value.items():
             if sub_key not in new_dict:
-                new_dict[sub_key] = {}
-            new_dict[sub_key][key] = sub_value
+                new_dict[str(sub_key)] = {}
+            new_dict[str(sub_key)][str(key)] = sub_value
     return new_dict
 
 
@@ -790,9 +794,14 @@ def get_player_info_per_role(puuid: str, df: pandas.DataFrame) -> dict:
     }
 
 
-def get_other_stats(puuid, df: pandas.DataFrame, calculation_function) -> dict:
+def get_other_stats(
+    puuid,
+    df: pandas.DataFrame,
+    calculation_function: str,
+    keys: list[str] = player_infos_keys,
+) -> dict:
     other_statistics = {}
-    for key in player_infos_keys:
+    for key in keys:
         other_statistics.update(
             add_total_in_dict(
                 pandas.DataFrame(
@@ -820,16 +829,24 @@ def get_gold_wasted(dict_gold_earned: dict, dict_gold_spent: dict) -> dict:
     }
 
 
-def get_other_mean(puuid, df: pandas.DataFrame) -> dict:
-    return get_other_stats(puuid, df, "mean")
+def get_other_mean(puuid: str, df: pandas.DataFrame) -> dict:
+    other_status = get_other_stats(puuid, df, "mean")
+    other_status["goldWasted"] = get_gold_wasted(
+        other_status["goldEarned"], other_status["goldSpent"]
+    )
+    return other_status
 
 
-def get_other_total(puuid, df: pandas.DataFrame) -> dict:
+def get_other_total(puuid: str, df: pandas.DataFrame) -> dict:
     other_status = get_other_stats(puuid, df, "sum")
     other_status["goldWasted"] = get_gold_wasted(
         other_status["goldEarned"], other_status["goldSpent"]
     )
     return other_status
+
+
+def get_other_max(puuid: str, df: pandas.DataFrame) -> dict:
+    return get_other_stats(puuid, df, "max", player_max_infos_keys)
 
 
 def get_team_bans(puuid: str, row: pandas.Series) -> list:
@@ -849,15 +866,17 @@ def get_top_5_banned_champ_in_team(puuid: str, df: pandas.DataFrame) -> dict:
         df.apply(lambda row: get_team_bans(puuid, row), axis=1),
         columns=["list_bans"],
     )
-    return dict(
-        Counter(
+
+    return {
+        str(key): value
+        for key, value in Counter(
             chain(
                 *df_bans[~df_bans["list_bans"].apply(lambda x: len(x) == 0)][
                     "list_bans"
                 ].to_list()
             )
         ).most_common(5)
-    )
+    }
 
 
 def get_challenges_per_mode(puuid: str, df: pandas.DataFrame):
@@ -879,6 +898,53 @@ def get_challenges_per_mode(puuid: str, df: pandas.DataFrame):
     )
 
     return df_result.to_dict()
+
+
+def get_builds_in_win_with_champ_per_mode(
+    puuid: str, row: pandas.Series, champion_id: dict
+):
+    participants = row.get("info.participants", [])
+    game_mode = row.get("info.gameMode")
+    for participant in participants:
+        if (
+            participant.get("puuid") == puuid
+            and participant.get("win")
+            and participant.get("championId") == champion_id.get(game_mode, None)
+        ):
+            return (
+                game_mode,
+                champion_id.get(game_mode, None),
+                sorted({participant.get(item) for item in itens_keys}),
+            )
+    return []
+
+
+def get_most_commom_build_with_win_champ(
+    puuid: str, df: pandas.DataFrame, most_played_champions: dict
+):
+    return (
+        pandas.DataFrame(
+            filter(
+                lambda x: x,
+                df.apply(
+                    lambda row: get_builds_in_win_with_champ_per_mode(
+                        puuid, row, most_played_champions
+                    ),
+                    axis=1,
+                ).to_list(),
+            ),
+            columns=["gameMode", "championId", "build"],
+        )
+        .groupby("gameMode")
+        .apply(lambda x: x["build"].mode().iloc[0])
+        .to_dict()
+    )
+
+
+def get_level_icon(puuid: str, row: pandas.Series) -> dict:
+    profile_icon = get_info_participant_value(puuid, row, "profileIcon")
+    player_level = get_info_participant_value(puuid, row, "summonerLevel")
+    return {"profileIcon": profile_icon, "summonerLevel": player_level}
 
 
 def create_rewind(puuid: str, timestamp_statistic: int = None):
@@ -918,6 +984,7 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
     other_totals = get_other_total(puuid, normalized_matchs_data_frame)
 
     other_means = get_other_mean(puuid, normalized_matchs_data_frame)
+    other_max = get_other_max(puuid, normalized_matchs_data_frame)
 
     infos = general_infos(normalized_matchs_data_frame)
 
@@ -936,6 +1003,19 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         puuid, normalized_matchs_data_frame
     )
 
+    dict_build_most_win_rate_with_champ = get_most_commom_build_with_win_champ(
+        puuid, normalized_matchs_data_frame, most_played_champ
+    )
+
+    player_cosmetics = (
+        normalized_matchs_data_frame[
+            normalized_matchs_data_frame["info.gameEndTimestamp"]
+            == normalized_matchs_data_frame["info.gameEndTimestamp"].max()
+        ]
+        .apply(lambda row: get_level_icon(puuid, row), axis=1)
+        .iloc[0]
+    )
+
     result_dict = {
         "kda_infos": transpose_dict(dict_kda),
         "side_infos": transpose_dict(dict_side),
@@ -947,10 +1027,13 @@ def create_rewind(puuid: str, timestamp_statistic: int = None):
         "challenges": challenges,
         "other_totals": other_totals,
         "other_means": other_means,
+        "other_maxs": other_max,
         "other_infos_players": other_infos_players,
         "player_role_win_info": dict_player_role_win_info,
         "most_played_champ": most_played_champ,
-        "dict_top_5_team_bans": dict_top_5_team_bans,
+        "top_5_team_bans": dict_top_5_team_bans,
+        "build_most_win_rate_with_champ": dict_build_most_win_rate_with_champ,
+        "player_cosmetics": player_cosmetics,
     }
 
     return convert_to_serializable(result_dict)

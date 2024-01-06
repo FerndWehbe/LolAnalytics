@@ -1,9 +1,10 @@
 import os
+from datetime import datetime
 
 from celery import shared_task
 from dotenv import load_dotenv
 from models import Match, Player, PlayerMatchAssociation
-from mongo import insert_match_data
+from mongo import insert_match_data, insert_rewind_data
 from repository import (
     create_match,
     create_player,
@@ -12,10 +13,11 @@ from repository import (
     get_matches_not_searched_by_puuid,
     get_player,
     update_match,
+    update_player,
 )
 from riot_api.lol_api import LolApi
 from sqlalchemy.exc import IntegrityError
-from utils import RateLimiter, get_timestamp_from_year
+from utils import RateLimiter, create_rewind, get_timestamp_from_year
 
 from .celery_app import celery_app
 
@@ -79,6 +81,16 @@ def get_matchs_ids(
         count=count,
         list_ids=list_ids,
     )
+
+
+def get_player_ranked_infos(lol_api: LolApi, summoner_id: str, region: str):
+    rate_limiter.make_request()
+    league_infos = lol_api.get_league_entries_infos_by_summoner(summoner_id, region)
+
+    return {
+        queue.get("queueType"): {"tier": queue.get("tier"), "rank": queue.get("rank")}
+        for queue in league_infos
+    }
 
 
 @shared_task
@@ -223,6 +235,17 @@ def get_infos_from_list_matchs(puuid: str, region: str) -> list:
             "next_task": "buscar_dados_error",
         }
 
+    task = generate_rewind.delay(puuid, region)
+    return {
+        "mensagem": (
+            f"Foram recuperadas {len(list_matchs_ids)} matchs"
+            "Iniciando geração de estatisticas."
+        ),
+        "dados": {"puuid": puuid},
+        "next_task": "gerar_estatisticas",
+        "task_id": task.id,
+    }
+
 
 @shared_task
 def get_infos_from_list_matchs_failed(
@@ -258,8 +281,37 @@ def get_infos_from_list_matchs_failed(
             match = update_match(match_id=match_id, updated_match=match)
         except Exception:
             falhas.append(match_id)
+
+    task = generate_rewind.delay(puuid, region)
     return {
         "mensagem": f"{len(falhas)} partida não foram encontradas no momento.",
         "dados": {"lista_falhas": falhas, "puuid": puuid},
         "next_task": "gerar_estatisticas",
+        "task_id": task.id,
+    }
+
+
+@shared_task
+def generate_rewind(puuid: str, region: str):
+    load_dotenv()
+
+    lol_api = LolApi(os.environ.get("riot_api_key"))
+
+    player = get_player(player_puuid=puuid)
+
+    player_ranked = get_player_ranked_infos(lol_api, player.summoner_id, region)
+
+    rewind = create_rewind(puuid, get_timestamp_from_year(2023))
+
+    rewind["ranked_infos"] = player_ranked
+
+    rewind_id = insert_rewind_data(rewind)
+    player.rewind_id = str(rewind_id)
+    player.update = datetime.now()
+    update_player(player_puuid=puuid, updated_player=player)
+
+    return {
+        "mensagem": f"Rewind gerada com sucesso para o jogador {player.name}"
+        f"Rewind de id {str(rewind_id)}",
+        "dados": {"puuid": puuid},
     }
