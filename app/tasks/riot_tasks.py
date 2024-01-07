@@ -130,7 +130,13 @@ def get_summoner_info(nick_name: str, riot_id: str, region: str) -> dict:
     rate_limiter.make_request()
     dados = lol_api.get_summoner_info_riot_id(nick_name, riot_id, region)
 
-    player = Player(puuid=dados.puuid, name=dados.name, riot_id=riot_id, region=region)
+    player = Player(
+        puuid=dados.puuid,
+        name=dados.name,
+        riot_id=riot_id,
+        region=region,
+        summoner_id=dados.id,
+    )
 
     try:
         player = create_player(player=player)
